@@ -11,6 +11,19 @@
 
     <title><?=$blog['title']?></title>
 
+    <?php if(null != $blog['google_analytics']): ?>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '<?=$blog['google_analytics']?>', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <?php endif; ?>
+
+
     <link rel="stylesheet" href="<?=$blog['base']?>theme/main.css">
     <link rel="canonical" href="http://<?=$blog['url'] . $post['url']?>">
     <link rel="author" href="https://plus.google.com/+ScarWu">
@@ -62,10 +75,6 @@
             var e = document.getElementsByTagName('script')[0];
             e.parentNode.insertBefore(s, e);
         }
-        <?php if(null != $blog['google_analytics']): ?>
-        var _gaq = [['_setAccount', '<?=$blog['google_analytics']?>'], ['_trackPageview']];
-        asyncLoad(('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js');
-        <?php endif; ?>
         <?php if(null != $blog['disqus_shortname']): ?>
         var disqus_shortname = '<?=$blog['disqus_shortname']?>';
         if (document.getElementsByTagName('disqus_comments')) {
