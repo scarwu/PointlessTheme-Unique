@@ -175,55 +175,33 @@ gulp.task('watch', function () {
  * Release
  */
 // Copy
-gulp.task('release:copy:boot', function () {
+gulp.task('release:copy:theme', function () {
     return gulp.src([
-            'src/boot/**/*',
-            'src/boot/.htaccess'
+            'src/boot/assets',
+            'src/application/handlers',
+            'src/application/views',
+            'src/application/config.php'
         ])
-        .pipe(gulp.dest('release/boot'));
-});
-
-gulp.task('release:copy:application', function () {
-    return gulp.src('src/application/**/*')
-        .pipe(gulp.dest('release/application'));
-});
-
-// Replace
-gulp.task('release:replace:index', function () {
-    return gulp.src('release/boot/index.php')
-        .pipe($.replace(
-            'define(\'ENVIRONMENT\', \'development\');',
-            'define(\'ENVIRONMENT\', \'production\');'
-        ))
-        .pipe(gulp.dest('release/boot'));
-});
-
-gulp.task('release:replace:config', function () {
-    return gulp.src('release/application/config/config.php')
-        .pipe($.replace(
-            '(int) (array_sum(explode(\' \', microtime())) * 1000)',
-            postfix
-        ))
-        .pipe(gulp.dest('release/application/config'));
+        .pipe(gulp.dest('theme'));
 });
 
 // Optimize
 gulp.task('release:optimize:scripts', function () {
-    return gulp.src('release/assets/scripts/**/*')
+    return gulp.src('theme/assets/scripts/**/*')
         .pipe($.uglify())
-        .pipe(gulp.dest('release/assets/scripts'));
+        .pipe(gulp.dest('theme/assets/scripts'));
 });
 
 gulp.task('release:optimize:styles', function () {
-    return gulp.src('release/assets/styles/**/*')
+    return gulp.src('theme/assets/styles/**/*')
         .pipe($.cssnano())
-        .pipe(gulp.dest('release/assets/styles'));
+        .pipe(gulp.dest('theme/assets/styles'));
 });
 
 gulp.task('release:optimize:images', function () {
-    return gulp.src('release/assets/images/**/*')
+    return gulp.src('theme/assets/images/**/*')
         .pipe($.imagemin())
-        .pipe(gulp.dest('release/assets/images'));
+        .pipe(gulp.dest('theme/assets/images'));
 });
 
 /**
@@ -271,11 +249,7 @@ gulp.task('release', function (callback) {
     ENVIRONMENT = 'production';
 
     run('prepare', [
-        'release:copy:boot',
-        'release:copy:application'
-    ], [
-        'release:replace:index',
-        'release:replace:config'
+        'release:copy:theme'
     ], [
         'release:optimize:images',
         'release:optimize:scripts',
