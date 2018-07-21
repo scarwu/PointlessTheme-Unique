@@ -1,18 +1,22 @@
 'use strict';
-
 /**
+ * Gulp Tasks
+ *
  * @author      Scar Wu
- * @copyright   Copyright (c) Ovomedia Creative Inc.
+ * @copyright   Copyright (c) Scar Wu (http://scar.tw)
  */
-var ENVIRONMENT = 'development'; // production | development | testing
 
-var gulp = require('gulp'),
-    del = require('del'),
-    run = require('run-sequence'),
-    $ = require('gulp-load-plugins')(),
-    process = require('process'),
-    webpack = require('webpack'),
-    webpackConfig = require('./webpack.config.js');
+var ENVIRONMENT = 'development'; // production | development | testing
+var WEBPACK_NEED_WATCH = false;
+
+var gulp = require('gulp');
+var del = require('del');
+var run = require('run-sequence');
+var $ = require('gulp-load-plugins')();
+var process = require('process');
+var webpackStream = require('webpack-stream');
+var webpack = require('webpack');
+var webpackConfig = require('./webpack.config.js');
 
 var postfix = (new Date()).getTime().toString();
 
@@ -34,12 +38,10 @@ function handleCompileError(event) {
 
 // Assets Compile Task
 var compileTask = {
-    less: function (src, dest) {
+    sass: function (src, dest) {
         return gulp.src(src)
-            .pipe($.less({
-                paths: dest
-            }).on('error', handleCompileError))
-            .pipe($.replace('../fonts/', '/assets/fonts/vendor/'))
+            .pipe($.sass().on('error', handleCompileError))
+            .pipe($.replace('../fonts/', '../../assets/fonts/vendor/'))
             .pipe($.autoprefixer())
             .pipe($.rename(function (path) {
                 path.basename = path.basename.split('.')[0];
@@ -51,16 +53,23 @@ var compileTask = {
         if ('production' === ENVIRONMENT) {
             var definePlugin = new webpack.DefinePlugin({
                 'process.env': {
-                    NODE_ENV: JSON.stringify('production')
+                    'ENV': "'production'",
+                    'BUILD_TIME': postfix,
+                    'NODE_ENV': "'production'"
                 }
             });
 
+            webpackConfig.mode = ENVIRONMENT;
             webpackConfig.plugins = webpackConfig.plugins || [];
             webpackConfig.plugins.push(definePlugin);
         }
 
+        if (WEBPACK_NEED_WATCH) {
+            webpackConfig.watch = true;
+        }
+
         return gulp.src(src)
-            .pipe($.webpack(webpackConfig).on('error', handleCompileError))
+            .pipe(webpackStream(webpackConfig, webpack).on('error', handleCompileError))
             .pipe(gulp.dest(dest));
     }
 };
@@ -107,10 +116,10 @@ gulp.task('copy:vendor:scripts', function () {
 /**
  * Styles
  */
-gulp.task('style:less', function() {
-    return compileTask.less([
-        // 'src/assets/styles/**/*.less',
-        'src/assets/styles/ovo.less'
+gulp.task('style:sass', function() {
+    return compileTask.sass([
+        'src/assets/styles/main.{sass,scss}',
+        'src/assets/styles/print.{sass,scss}'
     ], 'src/boot/assets/styles');
 });
 
@@ -118,22 +127,13 @@ gulp.task('style:less', function() {
  * Complex
  */
 gulp.task('complex:webpack', function () {
-    return compileTask.webpack(
-        'src/assets/scripts/ovo.jsx',
+    var result = compileTask.webpack(
+        'src/assets/scripts/main.jsx',
         'src/boot/assets/scripts'
     );
+
+    return WEBPACK_NEED_WATCH ? true : result;
 });
-
-/**
- * Shell Script
- */
-gulp.task('shell:link', $.shell.task([
-    'cd src/boot && ln -s ../uploads'
-]));
-
-gulp.task('shell:sourceguardian', $.shell.task([
-    'sourceguardian --phpversion 5.5 -n -z9 -b- `find encrypt -name "*.php" -type f`'
-]));
 
 /**
  * Watching Files
@@ -145,7 +145,8 @@ gulp.task('watch', function () {
 
     gulp.watch([
         'src/application/**/*',
-        'src/boot/**/*'
+        'src/boot/**/*',
+        '!src/boot/uploads/**/*'
     ]).on('change', $.livereload.changed);
 
     // Static Files
@@ -165,26 +166,9 @@ gulp.task('watch', function () {
     ]);
 
     // Pre Compile Files
-    gulp.watch('src/assets/styles/**/*.less', [
-        'style:less'
+    gulp.watch('src/assets/styles/**/*.{sass,scss}', [
+        'style:sass'
     ]);
-
-    gulp.watch([
-        'src/assets/scripts/**/*.jsx'
-    ], [
-        'complex:webpack'
-    ]);
-});
-
-/**
- * Encrypt
- */
-gulp.task('encrypt:copy', function () {
-    return gulp.src([
-            'release/**/*',
-            'release/**/*/.htaccess'
-        ])
-        .pipe(gulp.dest('encrypt'));
 });
 
 /**
@@ -225,33 +209,28 @@ gulp.task('release:replace:config', function () {
 
 // Optimize
 gulp.task('release:optimize:scripts', function () {
-    return gulp.src('release/boot/assets/scripts/**/*')
-        .pipe($.uglify({
-            mangle: {
-                except: ['require']
-            }
-        }))
-        .pipe(gulp.dest('release/boot/assets/scripts'));
+    return gulp.src('release/assets/scripts/**/*')
+        .pipe($.uglify())
+        .pipe(gulp.dest('release/assets/scripts'));
 });
 
 gulp.task('release:optimize:styles', function () {
-    return gulp.src('release/boot/assets/styles/**/*')
+    return gulp.src('release/assets/styles/**/*')
         .pipe($.cssnano())
-        .pipe(gulp.dest('release/boot/assets/styles'));
+        .pipe(gulp.dest('release/assets/styles'));
 });
 
-// gulp.task('release:optimize:images', function () {
-//     return gulp.src('release/boot/assets/images/**/*')
-//         .pipe($.imagemin())
-//         .pipe(gulp.dest('release/boot/assets/images'));
-// });
+gulp.task('release:optimize:images', function () {
+    return gulp.src('release/assets/images/**/*')
+        .pipe($.imagemin())
+        .pipe(gulp.dest('release/assets/images'));
+});
 
 /**
  * Clean Temp Folders
  */
 gulp.task('clean', function (callback) {
     return del([
-        'encrypt',
         'release',
         'src/boot'
     ], callback);
@@ -259,18 +238,13 @@ gulp.task('clean', function (callback) {
 
 gulp.task('clean:all', function (callback) {
     return del([
-        'encrypt',
         'release',
         'src/boot',
         'src/application/vendor',
         'node_modules',
+        'package.lock',
+        'yarn.lock',
         'composer.lock'
-    ], callback);
-});
-
-gulp.task('clean:link', function (callback) {
-    return del([
-        'src/boot/uploads'
     ], callback);
 });
 
@@ -278,16 +252,16 @@ gulp.task('clean:link', function (callback) {
  * Bundled Tasks
  */
 gulp.task('prepare', function (callback) {
-    run('clean', 'copy:static', [
+    run('clean', [
+        'copy:static'
+    ], [
         'copy:assets:fonts',
         'copy:assets:images',
         'copy:vendor:fonts',
         'copy:vendor:scripts'
     ], [
-        'style:less',
+        'style:sass',
         'complex:webpack'
-    ], [
-        'shell:link'
     ], callback);
 });
 
@@ -297,28 +271,22 @@ gulp.task('release', function (callback) {
     ENVIRONMENT = 'production';
 
     run('prepare', [
-        'clean:link'
-    ], [
         'release:copy:boot',
         'release:copy:application'
     ], [
         'release:replace:index',
         'release:replace:config'
     ], [
-        // 'release:optimize:images',
+        'release:optimize:images',
         'release:optimize:scripts',
         'release:optimize:styles'
     ], callback);
 });
 
-gulp.task('encrypt', function (callback) {
-    run('release', [
-        'encrypt:copy'
-    ], [
-        'shell:sourceguardian'
-    ], callback);
-});
-
 gulp.task('default', function (callback) {
+
+    // Webpack need watch
+    WEBPACK_NEED_WATCH = true;
+
     run('prepare', 'watch', callback);
 });

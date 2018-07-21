@@ -2,9 +2,9 @@
 /**
  * Article Data Handler for Theme
  *
- * @package     Pointless
+ * @package     Pointless Theme - Unique
  * @author      ScarWu
- * @copyright   Copyright (c) 2012-2017, ScarWu (http://scar.simcz.tw/)
+ * @copyright   Copyright (c) ScarWu (http://scar.tw/)
  * @link        http://github.com/scarwu/Pointless
  */
 

@@ -1,10 +1,10 @@
 <?php
 /**
- * Tag Data Handler for Theme
+ * Archive Data Handler for Theme
  *
- * @package     Pointless
+ * @package     Pointless Theme - Unique
  * @author      ScarWu
- * @copyright   Copyright (c) 2012-2014, ScarWu (http://scar.simcz.tw/)
+ * @copyright   Copyright (c) ScarWu (http://scar.tw/)
  * @link        http://github.com/scarwu/Pointless
  */
 
@@ -14,23 +14,21 @@ use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
 use NanoCLI\IO;
 
-class Tag extends ThemeHandler
+class Archive extends ThemeHandler
 {
     public function __construct()
     {
-        $this->type = 'tag';
+        $this->type = 'archive';
 
         foreach (Resource::get('post:article') as $post) {
-            foreach ($post['tag'] as $tag) {
-                if (!isset($this->list[$tag])) {
-                    $this->list[$tag] = [];
-                }
+            $year = $post['year'];
 
-                $this->list[$tag][] = $post;
+            if (!isset($this->list[$year])) {
+                $this->list[$year] = [];
             }
-        }
 
-        ksort($this->list);
+            $this->list[$year][] = $post;
+        }
     }
 
     /**
@@ -46,7 +44,7 @@ class Tag extends ThemeHandler
             return false;
         }
 
-        if (!in_array('tag', $views[$blockName])) {
+        if (!in_array('archive', $views[$blockName])) {
             return false;
         }
 
@@ -63,7 +61,7 @@ class Tag extends ThemeHandler
         $block[$blockName] .= $this->render([
             'blog' => Resource::get('attr:config')['blog'],
             'list' => $this->list
-        ], "{$blockName}/tag.php");
+        ], "{$blockName}/archive.php");
 
         Resource::set('block', $block);
     }
@@ -80,15 +78,15 @@ class Tag extends ThemeHandler
 
         $blog = Resource::get('attr:config')['blog'];
 
-        foreach ($this->list as $index => $postList) {
-            IO::log("Building tag/{$index}/");
+        foreach ((array) $this->list as $index => $postList) {
+            IO::log("Building archive/{$index}/");
             if (null === $first) {
                 $first = $index;
             }
 
             $post = [];
-            $post['title'] = "Tag: {$index}";
-            $post['url'] = "tag/{$index}/";
+            $post['title'] = "Archive: {$index}";
+            $post['url'] = "archive/{$index}/";
             $post['list'] = $postList;
 
             $paging = [];
@@ -96,31 +94,31 @@ class Tag extends ThemeHandler
             $paging['total'] = $total;
 
             if (isset($keys[$count - 1])) {
-                $tag = $keys[$count - 1];
+                $archive = $keys[$count - 1];
 
-                $paging['p_title'] = $tag;
-                $paging['p_url'] = "{$blog['base']}tag/{$tag}/";
+                $paging['p_title'] = $archive;
+                $paging['p_url'] = "{$blog['base']}archive/{$archive}/";
             }
 
             if (isset($keys[$count + 1])) {
-                $tag = $keys[$count + 1];
+                $archive = $keys[$count + 1];
 
-                $paging['n_title'] = $tag;
-                $paging['n_url'] = "{$blog['base']}tag/{$tag}/";
+                $paging['n_title'] = $archive;
+                $paging['n_url'] = "{$blog['base']}archive/{$archive}/";
             }
 
             $count++;
 
             $extBlog = [];
             $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-            $extBlog['url'] = $blog['dn'] . $blog['base'];
+            $extBlog['url'] = $blog['dn'] . $blog['base'] . $post['url'];
 
             $block = Resource::get('block');
             $block['container'] = $this->render([
                 'blog' => array_merge($blog, $extBlog),
                 'post' => $post,
                 'paging' => $paging
-            ], 'container/tag.php');
+            ], 'container/archive.php');
 
             // Save HTML
             $this->save($post['url'], $this->render([
@@ -130,6 +128,6 @@ class Tag extends ThemeHandler
             ], 'index.php'));
         }
 
-        $this->createIndex("/tag/{$first}/index.html", 'tag/index.html');
+        $this->createIndex("archive/{$first}/index.html", 'archive/index.html');
     }
 }
