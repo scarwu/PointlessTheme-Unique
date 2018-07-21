@@ -1,42 +1,53 @@
 <?php
 /**
- * Article Data Generator Script for Theme
+ * Article Data Handler for Theme
  *
  * @package     Pointless
  * @author      ScarWu
- * @copyright   Copyright (c) 2012-2014, ScarWu (http://scar.simcz.tw/)
+ * @copyright   Copyright (c) 2012-2017, ScarWu (http://scar.simcz.tw/)
  * @link        http://github.com/scarwu/Pointless
  */
 
+namespace Pointless\Handler;
+
+use Pointless\Library\Resource;
+use Pointless\Extend\ThemeHandler;
 use NanoCLI\IO;
 
-class Article extends ThemeScript
+class Article extends ThemeHandler
 {
     public function __construct()
     {
-        parent::__construct();
-
-        $this->list = Resource::get('post')['article'];
+        $this->type = 'article';
+        $this->list = Resource::get('post:article');
     }
 
     /**
-     * Generate Data
+     * Render Block
      *
      * @param string
      */
-    public function gen()
+    public function renderBlock($blockName)
+    {
+        return false;
+    }
+
+    /**
+     * Render Page
+     */
+    public function renderPage()
     {
         $count = 0;
         $total = count($this->list);
         $keys = array_keys($this->list);
 
-        $blog = Resource::get('config')['blog'];
+        $blog = Resource::get('attr:config')['blog'];
 
-        foreach ((array) $this->list as $post) {
+        foreach ($this->list as $post) {
             IO::log("Building article/{$post['url']}");
 
             $post['url'] = "article/{$post['url']}";
-            
+
             $paging = [];
             $paging['index'] = $count + 1;
             $paging['total'] = $total;
@@ -47,7 +58,7 @@ class Article extends ThemeScript
                 $url = $this->list[$key]['url'];
 
                 $paging['p_title'] = $title;
-                $paging['p_url'] = "{$blog['base']}article/$url";
+                $paging['p_url'] = "{$blog['base']}article/{$url}";
             }
 
             if (isset($keys[$count + 1])) {
@@ -56,28 +67,28 @@ class Article extends ThemeScript
                 $url = $this->list[$key]['url'];
 
                 $paging['n_title'] = $title;
-                $paging['n_url'] = "{$blog['base']}article/$url";
+                $paging['n_url'] = "{$blog['base']}article/{$url}";
             }
 
             $count++;
 
-            $ext = [];
-            $ext['title'] = "{$post['title']} | {$blog['name']}";
-            $ext['url'] = $blog['dn'] . $blog['base'];
-            $ext['description'] = '' !== $post['description']
+            $extBlog = [];
+            $extBlog['title'] = "{$post['title']} | {$blog['name']}";
+            $extBlog['url'] = $blog['dn'] . $blog['base'];
+            $extBlog['description'] = '' !== $post['description']
                 ? $post['description']
                 : $blog['description'];
 
             $block = Resource::get('block');
             $block['container'] = $this->render([
-                'blog' => array_merge($blog, $ext),
+                'blog' => array_merge($blog, $extBlog),
                 'post' => $post,
                 'paging' => $paging
             ], 'container/article.php');
 
             // Save HTML
             $this->save($post['url'], $this->render([
-                'blog' => array_merge($blog, $ext),
+                'blog' => array_merge($blog, $extBlog),
                 'post' => $post,
                 'block' => $block
             ], 'index.php'));

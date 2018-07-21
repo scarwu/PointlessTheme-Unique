@@ -1,6 +1,6 @@
 <?php
 /**
- * Page Data Generator Script for Theme
+ * Page Data Handler for Theme
  *
  * @package     Pointless
  * @author      ScarWu
@@ -8,34 +8,45 @@
  * @link        http://github.com/scarwu/Pointless
  */
 
+namespace Pointless\Handler;
+
+use Pointless\Library\Resource;
+use Pointless\Extend\ThemeHandler;
 use NanoCLI\IO;
 
-class Page extends ThemeScript
+class Page extends ThemeHandler
 {
     public function __construct()
     {
-        parent::__construct();
-
-        $this->list = Resource::get('post')['article'];
+        $this->type = 'page';
+        $this->list = Resource::get('post:article');
     }
 
     /**
-     * Generate Data
+     * Render Block
      *
      * @param string
      */
-    public function gen()
+    public function renderBlock($block_name)
     {
-        $quantity = Resource::get('config')['post']['article']['quantity'];
+        return false;
+    }
+
+    /**
+     * Render Page
+     */
+    public function renderPage()
+    {
+        $quantity = Resource::get('attr:config')['post']['article']['quantity'];
         $total = ceil(count($this->list) / $quantity);
 
-        $blog = Resource::get('config')['blog'];
+        $blog = Resource::get('attr:config')['blog'];
 
         for ($index = 1;$index <= $total;$index++) {
-            IO::log("Building page/$index/");
+            IO::log("Building page/{$index}/");
 
             $post = [];
-            $post['url'] = "page/$index/";
+            $post['url'] = "page/{$index}/";
             $post['list'] = array_slice($this->list, $quantity * ($index - 1), $quantity);
 
             $paging = [];
@@ -52,20 +63,20 @@ class Page extends ThemeScript
                 $paging['n_url'] = "{$blog['base']}page/" . ($index + 1) . '/';
             }
 
-            $ext = [];
-            $ext['title'] = $blog['name'];
-            $ext['url'] = $blog['dn'] . $blog['base'];
+            $extBlog = [];
+            $extBlog['title'] = $blog['name'];
+            $extBlog['url'] = $blog['dn'] . $blog['base'];
 
             $block = Resource::get('block');
             $block['container'] = $this->render([
-                'blog' => array_merge($blog, $ext),
+                'blog' => array_merge($blog, $extBlog),
                 'post' => $post,
                 'paging' => $paging
             ], 'container/page.php');
 
             // Save HTML
             $this->save($post['url'], $this->render([
-                'blog' => array_merge($blog, $ext),
+                'blog' => array_merge($blog, $extBlog),
                 'post' => $post,
                 'block' => $block
             ], 'index.php'));
