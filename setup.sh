@@ -12,4 +12,3 @@ yarn install
 cd ./node_modules/modernizr
 npm install
 ./bin/modernizr -c lib/config-all.json
-

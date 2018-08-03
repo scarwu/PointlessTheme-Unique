@@ -120,12 +120,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/scarwu/Oni.git",
-                "reference": "7d93c179dad71feb539f90a5ca14440463c063b0"
+                "reference": "386e9a775d4523f70066c97129c86f38345af3c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scarwu/Oni/zipball/7d93c179dad71feb539f90a5ca14440463c063b0",
-                "reference": "7d93c179dad71feb539f90a5ca14440463c063b0",
+                "url": "https://api.github.com/repos/scarwu/Oni/zipball/386e9a775d4523f70066c97129c86f38345af3c4",
+                "reference": "386e9a775d4523f70066c97129c86f38345af3c4",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
                     "homepage": "https://scar.tw"
                 }
             ],
-            "description": "A lightweight PHP framework for Web & CLI",
+            "description": "A Lightweight PHP Framework for Web & CLI",
             "homepage": "https://github.com/scarwu/Oni",
-            "time": "2018-08-03T05:48:07+00:00"
+            "time": "2018-08-03T08:58:00+00:00"
         }
     ],
     "packages-dev": [
@@ -879,16 +879,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.2.7",
+            "version": "7.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8e878aff7917ef66e702e03d1359b16eee254e2c"
+                "reference": "0b6b29faf95c03fd7867e866438b78d5692b6f03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e878aff7917ef66e702e03d1359b16eee254e2c",
-                "reference": "8e878aff7917ef66e702e03d1359b16eee254e2c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0b6b29faf95c03fd7867e866438b78d5692b6f03",
+                "reference": "0b6b29faf95c03fd7867e866438b78d5692b6f03",
                 "shasum": ""
             },
             "require": {
@@ -933,7 +933,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "7.2-dev"
+                    "dev-master": "7.3-dev"
                 }
             },
             "autoload": {
@@ -959,7 +959,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-07-15T05:20:50+00:00"
+            "time": "2018-08-03T06:02:45+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

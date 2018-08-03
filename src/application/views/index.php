@@ -1,16 +1,33 @@
 <!doctype html>
-<html lang="<?=$blog['lang']?>">
+<html class="no-js" style="display: block !important;" lang="<?=$blog['lang']?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta property="og:description" name="description" content="<?=$blog['description']?>">
     <meta property="og:title" content="<?=$blog['title']?>">
-    <meta property="og:url" content="https://<?=$blog['url'] . $post['url']?>">
-    <meta property="og:image" content="https://<?=$blog['url']?>images/icon.jpg">
+    <meta property="og:url" content="https://<?=$blog['url']?>/<?=$post['url']?>">
+    <meta property="og:image" content="https://<?=$blog['url']?>/images/icon.jpg">
     <meta property="og:type" content="blog">
 
     <title><?=$blog['title']?></title>
 
+    <link rel="canonical" href="https://<?=$blog['url']?>/<?$post['url']?>">
+    <link rel="author" href="https://plus.google.com/+ScarWu">
+    <link rel="image_src" href="https://<?=$blog['url']?>/images/icon.jpg">
+    <link rel="shortcut icon" href="https://<?=$blog['url']?>/favicon.ico">
+    <link rel="stylesheet" href="<?=$blog['base']?>assets/styles/theme.min.css">
+
+    <script src="<?=$blog['base']?>assets/scripts/vendor/modernizr.min.js"></script>
+    <script src="<?=$blog['base']?>assets/scripts/theme.min.js" async></script>
+
+    <script>
+        function asyncLoad(src) {
+            var s = document.createElement('script');
+            s.src = src; s.async = true;
+            var e = document.getElementsByTagName('script')[0];
+            e.parentNode.insertBefore(s, e);
+        }
+    </script>
     <?php if(null != $blog['google_analytics']): ?>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -22,12 +39,6 @@
         ga('send', 'pageview');
     </script>
     <?php endif; ?>
-
-    <link rel="stylesheet" href="<?=$blog['base']?>assets/styles.css">
-    <link rel="canonical" href="https://<?=$blog['url'] . $post['url']?>">
-    <link rel="author" href="https://plus.google.com/+ScarWu">
-    <link rel="image_src" href="https://<?=$blog['url']?>images/icon.jpg">
-    <link rel="shortcut icon" href="https://<?=$blog['url']?>favicon.ico">
 </head>
 <body>
     <hgroup id="header">
@@ -68,12 +79,6 @@
     </footer>
 
     <script>
-        function asyncLoad(src) {
-            var s = document.createElement('script');
-            s.src = src; s.async = true;
-            var e = document.getElementsByTagName('script')[0];
-            e.parentNode.insertBefore(s, e);
-        }
         <?php if(null != $blog['disqus_shortname']): ?>
         var disqus_shortname = '<?=$blog['disqus_shortname']?>';
         if (document.getElementsByTagName('disqus_comments')) {
@@ -89,7 +94,5 @@
             asyncLoad('//platform.twitter.com/widgets.js');
         }
     </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.1/modernizr.min.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js" data-main="<?=$blog['base']?>assets/scripts" async></script>
 </body>
 </html>

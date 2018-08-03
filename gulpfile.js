@@ -118,8 +118,7 @@ gulp.task('copy:vendor:scripts', function () {
  */
 gulp.task('style:sass', function() {
     return compileTask.sass([
-        'src/assets/styles/main.{sass,scss}',
-        'src/assets/styles/print.{sass,scss}'
+        'src/assets/styles/theme.{sass,scss}'
     ], 'src/boot/assets/styles');
 });
 
@@ -128,7 +127,7 @@ gulp.task('style:sass', function() {
  */
 gulp.task('complex:webpack', function () {
     var result = compileTask.webpack(
-        'src/assets/scripts/main.jsx',
+        'src/assets/scripts/theme.jsx',
         'src/boot/assets/scripts'
     );
 
