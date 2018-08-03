@@ -3,9 +3,9 @@
  * Archive Data Generator Script for Theme
  *
  * @package     Pointless Theme - Unique
- * @author      ScarWu
- * @copyright   Copyright (c) ScarWu (http://scar.tw/)
- * @link        http://github.com/scarwu/Pointless
+ * @author      Scar Wu
+ * @copyright   Copyright (c) Scar Wu (http://scar.tw)
+ * @link        https://github.com/scarwu/PointlessTheme-Unique
  */
 
 namespace Pointless\Handler;
