@@ -227,3 +227,18 @@ html {
         display: block;
     }
 }
+
+a {
+    cursor: pointer;
+    text-decoration: none !important;
+
+    &:visited,
+    &:link {
+        text-decoration: none !important;
+    }
+
+    &:hover
+    &:focus {
+        text-decoration: none !important;
+    }
+}
