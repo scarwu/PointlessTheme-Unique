@@ -1,6 +1,6 @@
 <?php
 /**
- * Static Page Data Handler for Theme
+ * Static Data Handler for Theme
  *
  * @package     Pointless Theme - Unique
  * @author      Scar Wu
@@ -12,14 +12,14 @@ namespace Pointless\Handler;
 
 use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
-use NanoCLI\IO;
+use Oni\CLI\IO;
 
-class StaticPage extends ThemeHandler
+class Static extends ThemeHandler
 {
     public function __construct()
     {
-        $this->type = 'staticPage';
-        $this->list = Resource::get('post:staticPage');
+        $this->type = 'static';
+        $this->list = Resource::get('post:static');
     }
 
     /**
@@ -44,13 +44,13 @@ class StaticPage extends ThemeHandler
 
             $extBlog = [];
             $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-            $extBlog['url'] = $blog['dn'] . $blog['base'];
+            $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
 
             $block = Resource::get('block');
             $block['container'] = $this->render([
                 'blog' => array_merge($blog, $extBlog),
                 'post' => $post
-            ], 'container/staticPage.php');
+            ], 'container/static.php');
 
             // Save HTML
             $this->save($post['url'], $this->render([

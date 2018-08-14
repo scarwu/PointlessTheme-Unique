@@ -12,7 +12,7 @@ namespace Pointless\Handler;
 
 use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
-use NanoCLI\IO;
+use Oni\CLI\IO;
 
 class Archive extends ThemeHandler
 {
@@ -80,6 +80,7 @@ class Archive extends ThemeHandler
 
         foreach ((array) $this->list as $index => $postList) {
             IO::log("Building archive/{$index}/");
+
             if (null === $first) {
                 $first = $index;
             }
@@ -97,21 +98,21 @@ class Archive extends ThemeHandler
                 $archive = $keys[$count - 1];
 
                 $paging['p_title'] = $archive;
-                $paging['p_url'] = "{$blog['base']}archive/{$archive}/";
+                $paging['p_url'] = "{$system['blog']['baseUrl']}archive/{$archive}/";
             }
 
             if (isset($keys[$count + 1])) {
                 $archive = $keys[$count + 1];
 
                 $paging['n_title'] = $archive;
-                $paging['n_url'] = "{$blog['base']}archive/{$archive}/";
+                $paging['n_url'] = "{$system['blog']['baseUrl']}archive/{$archive}/";
             }
 
             $count++;
 
             $extBlog = [];
             $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-            $extBlog['url'] = $blog['dn'] . $blog['base'] . $post['url'];
+            $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'] . $post['url'];
 
             $block = Resource::get('block');
             $block['container'] = $this->render([

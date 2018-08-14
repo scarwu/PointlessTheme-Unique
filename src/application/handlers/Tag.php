@@ -12,7 +12,7 @@ namespace Pointless\Handler;
 
 use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
-use NanoCLI\IO;
+use Oni\CLI\IO;
 
 class Tag extends ThemeHandler
 {
@@ -99,21 +99,21 @@ class Tag extends ThemeHandler
                 $tag = $keys[$count - 1];
 
                 $paging['p_title'] = $tag;
-                $paging['p_url'] = "{$blog['base']}tag/{$tag}/";
+                $paging['p_url'] = "{$system['blog']['baseUrl']}tag/{$tag}/";
             }
 
             if (isset($keys[$count + 1])) {
                 $tag = $keys[$count + 1];
 
                 $paging['n_title'] = $tag;
-                $paging['n_url'] = "{$blog['base']}tag/{$tag}/";
+                $paging['n_url'] = "{$system['blog']['baseUrl']}tag/{$tag}/";
             }
 
             $count++;
 
             $extBlog = [];
             $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-            $extBlog['url'] = $blog['dn'] . $blog['base'];
+            $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
 
             $block = Resource::get('block');
             $block['container'] = $this->render([

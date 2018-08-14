@@ -26,13 +26,10 @@ $whoops->register();
 // New Oni Web Application Instance
 $app = new Oni\Web\App();
 
-$app->setAttr('namespace', 'WebApp');
 $app->setAttr('controller/namespace', 'WebApp\Controller');
 $app->setAttr('controller/path', "{$root}/application/controllers");
 $app->setAttr('model/namespace', 'WebApp\Model');
 $app->setAttr('model/path', "{$root}/application/models");
 $app->setAttr('view/path', "{$root}/application/views");
-$app->setAttr('static/path', "{$root}/application/static");
-$app->setAttr('cache/path', "{$root}/application/cache");
 
 $app->run();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2843b422d43cd7fa8224030738d6b539",
+    "content-hash": "b641f3a805623813c5961dcacd6c30c0",
     "packages": [
         {
             "name": "filp/whoops",
@@ -120,16 +120,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/scarwu/Oni.git",
-                "reference": "6610e31b0ec4a040f8f50aba318e02d3f49c8fec"
+                "reference": "886fc3f789ddf5dd0b9b54bddfdf676b48b28501"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scarwu/Oni/zipball/6610e31b0ec4a040f8f50aba318e02d3f49c8fec",
-                "reference": "6610e31b0ec4a040f8f50aba318e02d3f49c8fec",
+                "url": "https://api.github.com/repos/scarwu/Oni/zipball/886fc3f789ddf5dd0b9b54bddfdf676b48b28501",
+                "reference": "886fc3f789ddf5dd0b9b54bddfdf676b48b28501",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0"
+                "php": ">=7.1.0"
             },
             "require-dev": {
                 "phpunit/php-code-coverage": "^6.0",
@@ -155,7 +155,7 @@
             ],
             "description": "A Lightweight PHP Framework for Web & CLI",
             "homepage": "https://github.com/scarwu/Oni",
-            "time": "2018-08-08T14:13:08+00:00"
+            "time": "2018-08-14T15:42:36+00:00"
         }
     ],
     "packages-dev": [
@@ -1623,7 +1623,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.0.0"
+        "php": ">=7.1.0"
     },
     "platform-dev": []
 }

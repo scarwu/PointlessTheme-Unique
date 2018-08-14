@@ -1,6 +1,3 @@
-<?php
-use Pointless\Library\Helper;
-?>
 <div id="side_about">
     <div class="title">About</div>
     <div class="content">

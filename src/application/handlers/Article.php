@@ -12,7 +12,7 @@ namespace Pointless\Handler;
 
 use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
-use NanoCLI\IO;
+use Oni\CLI\IO;
 
 class Article extends ThemeHandler
 {
@@ -58,7 +58,7 @@ class Article extends ThemeHandler
                 $url = $this->list[$key]['url'];
 
                 $paging['p_title'] = $title;
-                $paging['p_url'] = "{$blog['base']}article/{$url}";
+                $paging['p_url'] = "{$system['blog']['baseUrl']}article/{$url}";
             }
 
             if (isset($keys[$count + 1])) {
@@ -67,14 +67,14 @@ class Article extends ThemeHandler
                 $url = $this->list[$key]['url'];
 
                 $paging['n_title'] = $title;
-                $paging['n_url'] = "{$blog['base']}article/{$url}";
+                $paging['n_url'] = "{$system['blog']['baseUrl']}article/{$url}";
             }
 
             $count++;
 
             $extBlog = [];
             $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-            $extBlog['url'] = $blog['dn'] . $blog['base'];
+            $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
             $extBlog['description'] = '' !== $post['description']
                 ? $post['description']
                 : $blog['description'];

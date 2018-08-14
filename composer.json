@@ -3,7 +3,7 @@
         "vendor-dir": "src/application/vendor"
     },
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.1.0",
         "filp/whoops": "^2.2",
         "scarwu/oni": "dev-master"
     },
