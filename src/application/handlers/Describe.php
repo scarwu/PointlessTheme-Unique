@@ -1,6 +1,6 @@
 <?php
 /**
- * Static Data Handler for Theme
+ * Describe Data Handler for Theme
  *
  * @package     Pointless Theme - Unique
  * @author      Scar Wu
@@ -14,12 +14,12 @@ use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
 use Oni\CLI\IO;
 
-class Static extends ThemeHandler
+class Describe extends ThemeHandler
 {
     public function __construct()
     {
-        $this->type = 'static';
-        $this->list = Resource::get('post:static');
+        $this->type = 'describe';
+        $this->list = Resource::get('post:describe');
     }
 
     /**
@@ -50,7 +50,7 @@ class Static extends ThemeHandler
             $block['container'] = $this->render([
                 'blog' => array_merge($blog, $extBlog),
                 'post' => $post
-            ], 'container/static.php');
+            ], 'container/describe.php');
 
             // Save HTML
             $this->save($post['url'], $this->render([

@@ -46,32 +46,6 @@ class MainController extends Controller
     }
 
     /**
-     * Article Action
-     */
-    public function articleAction($params = [])
-    {
-        $this->view->setContentPath('container/article');
-        $this->view->setData([
-            'system' => [],
-            'theme' => [],
-            'post' => []
-        ]);
-    }
-
-    /**
-     * Static Action
-     */
-    public function staticAction($params = [])
-    {
-        $this->view->setContentPath('container/static');
-        $this->view->setData([
-            'system' => [],
-            'theme' => [],
-            'post' => []
-        ]);
-    }
-
-    /**
      * Archive Action
      */
     public function archiveAction($params = [])
@@ -85,11 +59,50 @@ class MainController extends Controller
     }
 
     /**
+     * Category Action
+     */
+    public function categoryAction($params = [])
+    {
+        $this->view->setContentPath('container/category');
+        $this->view->setData([
+            'system' => [],
+            'theme' => [],
+            'post' => []
+        ]);
+    }
+
+    /**
      * Tag Action
      */
     public function tagAction($params = [])
     {
         $this->view->setContentPath('container/tag');
+        $this->view->setData([
+            'system' => [],
+            'theme' => [],
+            'post' => []
+        ]);
+    }
+
+    /**
+     * Article Action
+     */
+    public function articleAction($params = [])
+    {
+        $this->view->setContentPath('container/article');
+        $this->view->setData([
+            'system' => [],
+            'theme' => [],
+            'post' => []
+        ]);
+    }
+
+    /**
+     * Describe Action
+     */
+    public function describeAction($params = [])
+    {
+        $this->view->setContentPath('container/describe');
         $this->view->setData([
             'system' => [],
             'theme' => [],

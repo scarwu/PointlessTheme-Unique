@@ -22,7 +22,7 @@ $nextButton = isset($paging['n_url'])
                 <span><?=Helper::linkTo("{$system['blog']['baseUrl']}tag/$tag/", $tag)?></span>
             </div>
             <?php endforeach; ?>
-            <?php if (null != $system['blog']['disqusShortname'] && $article['message']): ?>
+            <?php if (null != $system['blog']['disqusShortname'] && $article['withMessage']): ?>
             <div class="disqus_comments">
                 <i class="fa fa-comment"></i>
                 <a href="<?=Helper::linkEncode("{$system['blog']['baseUrl']}article/{$article['url']}")?>#disqus_thread">0 Comment</a>

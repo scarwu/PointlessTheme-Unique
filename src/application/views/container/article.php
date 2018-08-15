@@ -21,7 +21,7 @@ $nextButton = isset($paging['n_url'])
                 <?=Helper::linkTo("{$system['blog']['baseUrl']}tag/$tag/", $tag)?>
             </div>
             <?php endforeach; ?>
-            <?php if (null != $system['blog']['disqusShortname'] && $post['message']): ?>
+            <?php if (null != $system['blog']['disqusShortname'] && $post['withMessage']): ?>
             <div class="disqus_comments">
                 <i class="fa fa-comment"></i>
                 <a href="<?=Helper::linkEncode("{$system['blog']['baseUrl']}{$post['url']}")?>#disqus_thread">0 Comment</a>
@@ -43,7 +43,7 @@ $nextButton = isset($paging['n_url'])
         <div class="content"><?=$post['content']?></div>
     </article>
 
-    <?php if (null != $system['blog']['disqusShortname'] && $post['message']): ?>
+    <?php if (null != $system['blog']['disqusShortname'] && $post['withMessage']): ?>
     <div id="disqus_thread"></div>
     <?php endif; ?>
 

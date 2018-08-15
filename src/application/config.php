@@ -15,15 +15,17 @@ $config = [
     ],
     'views' => [
         'container' => [
-            'static',
+            'describe',
             'article',
             'page',
             'archive',
+            'category',
             'tag'
         ],
         'side' => [
             'about',
             'archive',
+            'category',
             'tag'
         ]
     ]
