@@ -1,6 +1,6 @@
 <?php
 /**
- * Archive Data Handler for Theme
+ * Category Data Handler for Theme
  *
  * @package     Pointless Theme - Unique
  * @author      Scar Wu
@@ -12,11 +12,11 @@ namespace Pointless\Handler;
 
 use Pointless\Extend\ThemeHandler;
 
-class Archive extends ThemeHandler
+class Category extends ThemeHandler
 {
     public function __construct()
     {
-        $this->type = 'archive';
+        $this->type = 'category';
     }
 
     /**
@@ -29,14 +29,22 @@ class Archive extends ThemeHandler
         $this->data = [];
 
         foreach ($postBundle['article'] as $post) {
-            $archive = $post['year'];
+            $category = $post['category'];
 
-            if (!isset($this->data[$archive])) {
-                $this->data[$archive] = [];
+            if (!isset($this->data[$category])) {
+                $this->data[$category] = [];
             }
 
-            $this->data[$archive][] = $post;
+            $this->data[$category][] = $post;
         }
+
+        uasort($this->data, function ($a, $b) {
+            if (count($a) === count($b)) {
+                return 0;
+            }
+
+            return count($a) > count($b) ? -1 : 1;
+        });
     }
 
     /**
@@ -62,13 +70,13 @@ class Archive extends ThemeHandler
         $totalIndex = count($this->data);
         $currentIndex = 0;
 
-        foreach ($this->data as $archive => $postList) {
+        foreach ($this->data as $key => $postList) {
 
             // Set Post
             $post = [];
-            $post['title'] = "Archive: {$archive}";
-            $post['url'] = "archive/{$archive}/";
-            $post['list'] = $postList;
+            $post['title'] ="Category: {$key}";
+            $post['url'] = "category/{$key}";
+            $post['list'] = $this->createDateList($postList);
 
             // Set Paging
             $paging = [];
@@ -79,14 +87,14 @@ class Archive extends ThemeHandler
                 $prevKey = $keys[$currentIndex - 1];
 
                 $paging['prevTitle'] = $prevKey;
-                $paging['prevUrl'] = "archive/{$prevKey}/";
+                $paging['prevUrl'] = "category/{$prevKey}";
             }
 
             if (isset($keys[$currentIndex + 1])) {
-                $nextKey = $keys[$currentIndex + 1];
+                $category = $keys[$currentIndex + 1];
 
-                $paging['nextTitle'] = $nextKey;
-                $paging['nextUrl'] = "archive/{$nextKey}/";
+                $paging['nextTitle'] = $category;
+                $paging['nextUrl'] = "category/{$category}";
             }
 
             $currentIndex++;
@@ -94,10 +102,32 @@ class Archive extends ThemeHandler
 
         // $extBlog = [];
         // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'] . $post['url'];
+        // $extBlog['url'] = $blog['dn'] . $blog['base'];
 
-        // $this->createIndex("archive/{$first}/index.html", 'archive/index.html');
+        // $this->createIndex("category/{$first}/index.html", 'category/index.html');
 
         return $this->data;
+    }
+
+    private function createDateList($list)
+    {
+        $result = [];
+
+        foreach ($list as $article) {
+            $year = $article['year'];
+            $month = $article['month'];
+
+            if (!isset($result[$year])) {
+                $result[$year] = [];
+            }
+
+            if (!isset($result[$year][$month])) {
+                $result[$year][$month] = [];
+            }
+
+            $result[$year][$month][] = $article;
+        }
+
+        return $result;
     }
 }

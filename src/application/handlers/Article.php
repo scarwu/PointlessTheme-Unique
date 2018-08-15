@@ -10,88 +10,72 @@
 
 namespace Pointless\Handler;
 
-use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
-use Oni\CLI\IO;
 
 class Article extends ThemeHandler
 {
     public function __construct()
     {
         $this->type = 'article';
-        $this->list = Resource::get('post:article');
     }
 
     /**
-     * Render Block
+     * Init Data
      *
-     * @param string
+     * @param array
      */
-    public function renderBlock($blockName)
+    public function initData($postBundle)
     {
-        return false;
+        $this->data = $postBundle['article'];
     }
 
     /**
-     * Render Page
+     * Get Container Data
+     *
+     * @return array
      */
-    public function renderPage()
+    public function getContainerData()
     {
-        $count = 0;
-        $total = count($this->list);
-        $keys = array_keys($this->list);
+        $keys = array_keys($this->data);
+        $totalIndex = count($this->data);
+        $currentIndex = 0;
 
-        $blog = Resource::get('system:config')['blog'];
+        foreach ($this->data as $key => $post) {
 
-        foreach ($this->list as $post) {
-            IO::log("Building article/{$post['url']}");
-
-            $post['url'] = "article/{$post['url']}";
-
+            // Set Paging
             $paging = [];
-            $paging['index'] = $count + 1;
-            $paging['total'] = $total;
+            $paging['totalIndex'] = $totalIndex;
+            $paging['currentIndex'] = $currentIndex + 1;
 
-            if (isset($keys[$count - 1])) {
-                $key = $keys[$count - 1];
-                $title = $this->list[$key]['title'];
-                $url = $this->list[$key]['url'];
+            if (isset($keys[$currentIndex - 1])) {
+                $prevKey = $keys[$currentIndex - 1];
+                $title = $this->data[$prevKey]['title'];
+                $url = $this->data[$prevKey]['url'];
 
-                $paging['p_title'] = $title;
-                $paging['p_url'] = "{$system['blog']['baseUrl']}article/{$url}";
+                $paging['prevTitle'] = $title;
+                $paging['prevUrl'] = "article/{$url}/";
             }
 
-            if (isset($keys[$count + 1])) {
-                $key = $keys[$count + 1];
-                $title = $this->list[$key]['title'];
-                $url = $this->list[$key]['url'];
+            if (isset($keys[$currentIndex + 1])) {
+                $nextKey = $keys[$currentIndex + 1];
+                $title = $this->data[$nextKey]['title'];
+                $url = $this->data[$nextKey]['url'];
 
-                $paging['n_title'] = $title;
-                $paging['n_url'] = "{$system['blog']['baseUrl']}article/{$url}";
+                $paging['nextTitle'] = $title;
+                $paging['nextUrl'] = "article/{$url}/";
             }
 
-            $count++;
+            $post['paging'] = $paging;
+            $this->data[$key] = $post;
 
-            $extBlog = [];
-            $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-            $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-            $extBlog['description'] = '' !== $post['description']
-                ? $post['description']
-                : $blog['description'];
-
-            $block = Resource::get('block');
-            $block['container'] = $this->render([
-                'blog' => array_merge($blog, $extBlog),
-                'post' => $post,
-                'paging' => $paging
-            ], 'container/article.php');
-
-            // Save HTML
-            $this->save($post['url'], $this->render([
-                'blog' => array_merge($blog, $extBlog),
-                'post' => $post,
-                'block' => $block
-            ], 'index.php'));
+            $currentIndex++;
         }
+
+        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
+        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
+        // $extBlog['description'] = '' !== $post['description']
+        //     ? $post['description'] : $blog['description'];
+
+        return $this->data;
     }
 }

@@ -10,126 +10,96 @@
 
 namespace Pointless\Handler;
 
-use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
-use Oni\CLI\IO;
 
 class Tag extends ThemeHandler
 {
     public function __construct()
     {
         $this->type = 'tag';
+    }
 
-        foreach (Resource::get('post:article') as $post) {
-            foreach ($post['tag'] as $tag) {
-                if (!isset($this->list[$tag])) {
-                    $this->list[$tag] = [];
+    /**
+     * Init Data
+     *
+     * @param array
+     */
+    public function initData($postBundle)
+    {
+        $this->data = [];
+
+        foreach ($postBundle['article'] as $post) {
+            foreach ($post['tags'] as $tag) {
+                if (!isset($this->data[$tag])) {
+                    $this->data[$tag] = [];
                 }
 
-                $this->list[$tag][] = $post;
+                $this->data[$tag][] = $post;
             }
         }
 
-        ksort($this->list);
+        ksort($this->data);
     }
 
     /**
-     * Render Block
+     * Get Side Data
      *
-     * @param string
+     * @return array
      */
-    public function renderBlock($blockName)
+    public function getSideData()
     {
-        $views = Resource::get('theme:config')['views'];
-
-        if (!isset($views[$blockName])) {
-            return false;
-        }
-
-        if (!in_array('tag', $views[$blockName])) {
-            return false;
-        }
-
-        $block = Resource::get('block');
-
-        if (null === $block) {
-            $block = [];
-        }
-
-        if (!isset($block[$blockName])) {
-            $block[$blockName] = '';
-        }
-
-        $block[$blockName] .= $this->render([
-            'blog' => Resource::get('system:config')['blog'],
-            'list' => $this->list
-        ], "{$blockName}/tag.php");
-
-        Resource::set('block', $block);
+        return $this->data;
     }
 
     /**
-     * Render Page
+     * Get Container Data
+     *
+     * @return array
      */
-    public function renderPage()
+    public function getContainerData()
     {
-        $first = null;
-        $count = 0;
-        $total = count($this->list);
-        $keys = array_keys($this->list);
+        $keys = array_keys($this->data);
+        $firstKey = $keys[0];
 
-        $blog = Resource::get('system:config')['blog'];
+        $totalIndex = count($this->data);
+        $currentIndex = 0;
 
-        foreach ($this->list as $index => $postList) {
-            IO::log("Building tag/{$index}/");
-            if (null === $first) {
-                $first = $index;
-            }
+        foreach ($this->data as $key => $postList) {
 
+            // Set Post
             $post = [];
-            $post['title'] = "Tag: {$index}";
-            $post['url'] = "tag/{$index}/";
+            $post['title'] = "Tag: {$key}";
+            $post['url'] = "tag/{$key}/";
             $post['list'] = $postList;
 
+            // Set Paging
             $paging = [];
-            $paging['index'] = $count + 1;
-            $paging['total'] = $total;
+            $paging['totalIndex'] = $totalIndex;
+            $paging['currentIndex'] = $currentIndex + 1;
 
-            if (isset($keys[$count - 1])) {
-                $tag = $keys[$count - 1];
+            if (isset($keys[$currentIndex - 1])) {
+                $prevKey = $keys[$currentIndex - 1];
 
-                $paging['p_title'] = $tag;
-                $paging['p_url'] = "{$system['blog']['baseUrl']}tag/{$tag}/";
+                $paging['prevTitle'] = $prevKey;
+                $paging['prevUrl'] = "tag/{$prevKey}/";
             }
 
-            if (isset($keys[$count + 1])) {
-                $tag = $keys[$count + 1];
+            if (isset($keys[$currentIndex + 1])) {
+                $nextKey = $keys[$currentIndex + 1];
 
-                $paging['n_title'] = $tag;
-                $paging['n_url'] = "{$system['blog']['baseUrl']}tag/{$tag}/";
+                $paging['nextTitle'] = $nextKey;
+                $paging['nextUrl'] = "tag/{$nextKey}/";
             }
 
-            $count++;
-
-            $extBlog = [];
-            $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-            $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-
-            $block = Resource::get('block');
-            $block['container'] = $this->render([
-                'blog' => array_merge($blog, $extBlog),
-                'post' => $post,
-                'paging' => $paging
-            ], 'container/tag.php');
-
-            // Save HTML
-            $this->save($post['url'], $this->render([
-                'blog' => array_merge($blog, $extBlog),
-                'post' => $post,
-                'block' => $block
-            ], 'index.php'));
+            $currentIndex++;
         }
 
-        $this->createIndex("/tag/{$first}/index.html", 'tag/index.html');
+        // $extBlog = [];
+        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
+        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
+
+        // $this->createIndex("/tag/{$first}/index.html", 'tag/index.html');
+
+        return $this->data;
     }
 }

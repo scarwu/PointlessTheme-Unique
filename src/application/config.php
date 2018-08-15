@@ -13,6 +13,14 @@ $config = [
         'Atom',
         'Sitemap'
     ],
+    'handlers' => [
+        'Describe',
+        'Article',
+        'Page',
+        'Archive',
+        'Category',
+        'Tag'
+    ],
     'views' => [
         'container' => [
             'describe',

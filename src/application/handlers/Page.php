@@ -10,79 +10,70 @@
 
 namespace Pointless\Handler;
 
-use Pointless\Library\Resource;
 use Pointless\Extend\ThemeHandler;
-use Oni\CLI\IO;
 
 class Page extends ThemeHandler
 {
     public function __construct()
     {
         $this->type = 'page';
-        $this->list = Resource::get('post:article');
     }
 
     /**
-     * Render Block
+     * Init Data
      *
-     * @param string
+     * @param array
      */
-    public function renderBlock($block_name)
+    public function initData($postBundle)
     {
-        return false;
+        $this->data = $postBundle['article'];
     }
 
     /**
-     * Render Page
+     * Get Container Data
+     *
+     * @return array
      */
-    public function renderPage()
+    public function getContainerData()
     {
         $quantity = Resource::get('system:config')['post']['article']['quantity'];
-        $total = ceil(count($this->list) / $quantity);
+        $totalIndex = ceil(count($this->data) / $quantity);
 
-        $blog = Resource::get('system:config')['blog'];
+        for ($currentIndex = 0;$currentIndex < $totalIndex;$currentIndex++) {
 
-        for ($index = 1;$index <= $total;$index++) {
-            IO::log("Building page/{$index}/");
-
+            // Set Post
             $post = [];
-            $post['url'] = "page/{$index}/";
-            $post['list'] = array_slice($this->list, $quantity * ($index - 1), $quantity);
+            $post['url'] = "page/{$currentIndex}/";
+            $post['list'] = array_slice($this->data, $quantity * ($currentIndex - 1), $quantity);
 
+            // Set Paging
             $paging = [];
-            $paging['index'] = $index;
-            $paging['total'] = $total;
+            $paging['totalIndex'] = $totalIndex;
+            $paging['currentIndex'] = $currentIndex + 1;
 
-            if ($index - 1 >= 1) {
-                $paging['p_title'] = $index - 1;
-                $paging['p_url'] = "{$system['blog']['baseUrl']}page/" . ($index - 1) . '/';
+            if ($currentIndex - 1 >= 0) {
+                $prevKey = $currentIndex - 1;
+
+                $paging['prevTitle'] = $prevKey;
+                $paging['prevUrl'] = "page/{$prevKey}/";
             }
 
-            if ($index + 1 <= $total) {
-                $paging['n_title'] = $index + 1;
-                $paging['n_url'] = "{$system['blog']['baseUrl']}page/" . ($index + 1) . '/';
+            if ($currentIndex + 1 < $totalIndex) {
+                $nextKey = $currentIndex + 1;
+
+                $paging['nextTitle'] = $nextKey;
+                $paging['nextUrl'] = "page/{$nextKey}/";
             }
 
-            $extBlog = [];
-            $extBlog['title'] = $blog['name'];
-            $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-
-            $block = Resource::get('block');
-            $block['container'] = $this->render([
-                'blog' => array_merge($blog, $extBlog),
-                'post' => $post,
-                'paging' => $paging
-            ], 'container/page.php');
-
-            // Save HTML
-            $this->save($post['url'], $this->render([
-                'blog' => array_merge($blog, $extBlog),
-                'post' => $post,
-                'block' => $block
-            ], 'index.php'));
         }
 
-        $this->createIndex('page/1/index.html', 'page/index.html');
-        $this->createIndex('page/1/index.html', 'index.html');
+        // $extBlog = [];
+        // $extBlog['title'] = $blog['name'];
+        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
+
+        // $this->createIndex('page/1/index.html', 'page/index.html');
+        // $this->createIndex('page/1/index.html', 'index.html');
+
+        return $this->data;
     }
 }
