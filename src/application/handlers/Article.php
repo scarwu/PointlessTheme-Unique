@@ -30,12 +30,17 @@ class Article extends ThemeHandler
     }
 
     /**
-     * Get Container Data
+     * Get Container Data List
      *
      * @return array
      */
-    public function getContainerData()
+    public function getContainerDataList()
     {
+        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
+        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
+        // $extBlog['description'] = '' !== $post['description']
+        //     ? $post['description'] : $blog['description'];
+
         $keys = array_keys($this->data);
         $totalIndex = count($this->data);
         $currentIndex = 0;
@@ -70,11 +75,6 @@ class Article extends ThemeHandler
 
             $currentIndex++;
         }
-
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-        // $extBlog['description'] = '' !== $post['description']
-        //     ? $post['description'] : $blog['description'];
 
         return $this->data;
     }

@@ -50,24 +50,29 @@ class Archive extends ThemeHandler
     }
 
     /**
-     * Get Container Data
+     * Get Container Data List
      *
      * @return array
      */
-    public function getContainerData()
+    public function getContainerDataList()
     {
+        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
+        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'] . $post['url'];
+
+        // $this->createIndex("archive/{$first}/index.html", 'archive/index.html');
+
         $keys = array_keys($this->data);
         $firstKey = $keys[0];
 
         $totalIndex = count($this->data);
         $currentIndex = 0;
 
-        foreach ($this->data as $archive => $postList) {
+        foreach ($this->data as $key => $postList) {
 
             // Set Post
             $post = [];
-            $post['title'] = "Archive: {$archive}";
-            $post['url'] = "archive/{$archive}/";
+            $post['title'] = "Archive: {$key}";
+            $post['url'] = "archive/{$key}/";
             $post['list'] = $postList;
 
             // Set Paging
@@ -91,12 +96,6 @@ class Archive extends ThemeHandler
 
             $currentIndex++;
         }
-
-        // $extBlog = [];
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'] . $post['url'];
-
-        // $this->createIndex("archive/{$first}/index.html", 'archive/index.html');
 
         return $this->data;
     }

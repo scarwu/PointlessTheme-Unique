@@ -30,11 +30,11 @@ class Describe extends ThemeHandler
     }
 
     /**
-     * Get Container Data
+     * Get Container Data List
      *
      * @return array
      */
-    public function getContainerData()
+    public function getContainerDataList()
     {
         // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
         // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];

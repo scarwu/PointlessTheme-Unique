@@ -1,26 +1,30 @@
 <?php
 use Oni\Web\Helper;
 
-$prevButton = isset($paging['p_url'])
-    ? Helper::linkTo($paging['p_url'], "<< {$paging['p_title']}") : '';
+$baseUrl = $systemConfig['blog']['baseUrl'];
 
-$nextButton = isset($paging['n_url'])
-    ? Helper::linkTo($paging['n_url'], "{$paging['n_title']} >>") : '';
+// Paging
+$paging = $container['paging'];
+$prevButton = isset($paging['prevUrl'])
+    ? Helper::linkTo($paging['prevUrl'], "<< {$paging['prevTitle']}") : '';
+$nextButton = isset($paging['nextUrl'])
+    ? Helper::linkTo($paging['nextUrl'], "{$paging['nextTitle']} >>") : '';
+$indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
 ?>
 <div id="container_category">
     <article class="post_block">
-        <h1 class="title"><?=$post['title']?></h1>
+        <h1 class="title"><?=$container['title']?></h1>
         <div class="list">
-            <?php foreach($post['list'] as $article): ?>
+            <?php foreach ($container['list'] as $article): ?>
             <section>
-                <h1><?=Helper::linkTo("{$system['blog']['baseUrl']}article/{$article['url']}", $article['title'])?></h1>
+                <h1><?=Helper::linkTo("{$baseUrl}article/{$article['url']}/", $article['title'])?></h1>
                 <span>
                     <i class="fa fa-calendar"></i>
-                    <?=Helper::linkTo("{$system['blog']['baseUrl']}archive/{$article['year']}/", $article['date'])?>
+                    <?=Helper::linkTo("{$baseUrl}archive/{$article['year']}/", $article['date'])?>
                 </span>
                 <span>
                     <i class="fa fa-category"></i>
-                    <?=Helper::linkTo("{$system['blog']['baseUrl']}category/$article['category']/", $article['category'])?>
+                    <?=Helper::linkTo("{$baseUrl}category/$article['category']/", $article['category'])?>
                 </span>
             </section>
             <?php endforeach; ?>
@@ -28,14 +32,8 @@ $nextButton = isset($paging['n_url'])
     </article>
 
     <div id="paging">
-        <span class="new">
-            <?=$prevButton?>
-        </span>
-        <span class="old">
-            <?=$nextButton?>
-        </span>
-        <span class="count">
-            <?="{$paging['index']} / {$paging['total']}"?>
-        </span>
+        <span class="new"><?=$prevButton?></span>
+        <span class="old"><?=$nextButton?></span>
+        <span class="count"><?=$indicator?></span>
     </div>
 </div>

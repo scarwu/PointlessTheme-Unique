@@ -1,61 +1,72 @@
 <?php
 use Oni\Web\Helper;
 
-$prevButton = isset($paging['p_url'])
-    ? Helper::linkTo($paging['p_url'], "<< {$paging['p_title']}") : '';
+$domainName = $systemConfig['blog']['domainName'];
+$baseUrl = $systemConfig['blog']['baseUrl'];
+$disqusShortname = $systemConfig['blog']['disqusShortname'];
 
-$nextButton = isset($paging['n_url'])
-    ? Helper::linkTo($paging['n_url'], "{$paging['n_title']} >>") : '';
+// Paging
+$paging = $container['paging'];
+$prevButton = isset($paging['prevUrl'])
+    ? Helper::linkTo($paging['prevUrl'], "<< {$paging['prevTitle']}") : '';
+$nextButton = isset($paging['nextUrl'])
+    ? Helper::linkTo($paging['nextUrl'], "{$paging['nextTitle']} >>") : '';
+$indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
 ?>
 <div id="container_article">
     <article class="post_block">
-        <h1 class="title"><?=$post['title']?></h1>
+        <h1 class="title"><?=$container['title']?></h1>
         <div class="info">
             <div class="date">
                 <i class="fa fa-calendar"></i>
-                <?=Helper::linkTo("{$system['blog']['baseUrl']}archive/{$post['year']}/", $post['date'])?>
+                <?=Helper::linkTo("{$baseUrl}archive/{$container['year']}/", $container['date'])?>
             </div>
-            <?php foreach ($post['tag'] as $index =>  $tag): ?>
+            <?php foreach ($container['tags'] as $index => $tag): ?>
             <div class="tag">
                 <i class="fa fa-tag"></i>
-                <?=Helper::linkTo("{$system['blog']['baseUrl']}tag/$tag/", $tag)?>
+                <?=Helper::linkTo("{$baseUrl}tag/{$tag}/", $tag)?>
             </div>
             <?php endforeach; ?>
-            <?php if (null != $system['blog']['disqusShortname'] && $post['withMessage']): ?>
+            <?php if (null !== $disqusShortname && $container['withMessage']): ?>
             <div class="disqus_comments">
                 <i class="fa fa-comment"></i>
-                <a href="<?=Helper::linkEncode("{$system['blog']['baseUrl']}{$post['url']}")?>#disqus_thread">0 Comment</a>
+                <a href="<?=Helper::linkEncode("{$baseUrl}{$container['url']}")?>#disqus_thread">0 Comment</a>
             </div>
             <?php endif; ?>
             <hr>
             <div class="social_tool">
                 <div class="twitter">
-                    <a class="twitter-share-button" data-url="http://<?=Helper::linkEncode("{$system['blog']['url']}{$post['url']}")?>" data-text="<?=$system['blog']['title']?>" data-lang="en" data-via="xneriscool"></a>
+                    <a class="twitter-share-button"
+                        data-url="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}/")?>"
+                        data-text="<?="{$container['title']} | {$systemConfig['blog']['name']}"?>"
+                        data-lang="en"
+                        data-via="xneriscool"></a>
                 </div>
                 <div class="facebook">
-                    <div class="fb-like" data-href="http://<?=Helper::linkEncode("{$system['blog']['url']}{$post['url']}")?>" data-layout="button_count" data-action="like" data-show-faces="true" data-share="false"></div>
+                    <div class="fb-like"
+                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}/")?>"
+                        data-layout="button_count"
+                        data-action="like"
+                        data-show-faces="true"
+                        data-share="false"></div>
                 </div>
                 <div class="google">
-                    <div class="g-plusone" data-href="http://<?=Helper::linkEncode("{$system['blog']['url']}{$post['url']}")?>" data-size="medium"></div>
+                    <div class="g-plusone"
+                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}/")?>"
+                        data-size="medium"></div>
                 </div>
             </div>
         </div>
-        <div class="content"><?=$post['content']?></div>
+        <div class="content"><?=$container['content']?></div>
     </article>
 
-    <?php if (null != $system['blog']['disqusShortname'] && $post['withMessage']): ?>
+    <?php if (null !== $disqusShortname && $container['withMessage']): ?>
     <div id="disqus_thread"></div>
     <?php endif; ?>
 
     <div id="paging">
-        <span class="new">
-            <?=$prevButton?>
-        </span>
-        <span class="old">
-            <?=$nextButton?>
-        </span>
-        <span class="count">
-            <?="{$paging['index']} / {$paging['total']}"?>
-        </span>
+        <span class="new"><?=$prevButton?></span>
+        <span class="old"><?=$nextButton?></span>
+        <span class="count"><?=$indicator?></span>
     </div>
 </div>

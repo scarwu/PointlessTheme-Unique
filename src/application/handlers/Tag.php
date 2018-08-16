@@ -52,12 +52,17 @@ class Tag extends ThemeHandler
     }
 
     /**
-     * Get Container Data
+     * Get Container Data List
      *
      * @return array
      */
-    public function getContainerData()
+    public function getContainerDataList()
     {
+        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
+        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
+
+        // $this->createIndex("/tag/{$first}/index.html", 'tag/index.html');
+
         $keys = array_keys($this->data);
         $firstKey = $keys[0];
 
@@ -93,12 +98,6 @@ class Tag extends ThemeHandler
 
             $currentIndex++;
         }
-
-        // $extBlog = [];
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-
-        // $this->createIndex("/tag/{$first}/index.html", 'tag/index.html');
 
         return $this->data;
     }

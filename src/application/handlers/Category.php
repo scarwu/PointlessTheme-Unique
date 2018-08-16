@@ -58,12 +58,17 @@ class Category extends ThemeHandler
     }
 
     /**
-     * Get Container Data
+     * Get Container Data List
      *
      * @return array
      */
-    public function getContainerData()
+    public function getContainerDataList()
     {
+        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
+        // $extBlog['url'] = $blog['dn'] . $blog['base'];
+
+        // $this->createIndex("category/{$first}/index.html", 'category/index.html');
+
         $keys = array_keys($this->data);
         $firstKey = $keys[0];
 
@@ -91,20 +96,14 @@ class Category extends ThemeHandler
             }
 
             if (isset($keys[$currentIndex + 1])) {
-                $category = $keys[$currentIndex + 1];
+                $nextKey = $keys[$currentIndex + 1];
 
-                $paging['nextTitle'] = $category;
-                $paging['nextUrl'] = "category/{$category}";
+                $paging['nextTitle'] = $nextKey;
+                $paging['nextUrl'] = "category/{$nextKey}";
             }
 
             $currentIndex++;
         }
-
-        // $extBlog = [];
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $blog['dn'] . $blog['base'];
-
-        // $this->createIndex("category/{$first}/index.html", 'category/index.html');
 
         return $this->data;
     }

@@ -30,13 +30,19 @@ class Page extends ThemeHandler
     }
 
     /**
-     * Get Container Data
+     * Get Container Data List
      *
      * @return array
      */
-    public function getContainerData()
+    public function getContainerDataList()
     {
-        $quantity = Resource::get('system:config')['post']['article']['quantity'];
+        // $extBlog['title'] = $blog['name'];
+        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
+
+        // $this->createIndex('page/1/index.html', 'page/index.html');
+        // $this->createIndex('page/1/index.html', 'index.html');
+
+        $quantity = 10; // TODO: from system:config article/quantity
         $totalIndex = ceil(count($this->data) / $quantity);
 
         for ($currentIndex = 0;$currentIndex < $totalIndex;$currentIndex++) {
@@ -66,13 +72,6 @@ class Page extends ThemeHandler
             }
 
         }
-
-        // $extBlog = [];
-        // $extBlog['title'] = $blog['name'];
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-
-        // $this->createIndex('page/1/index.html', 'page/index.html');
-        // $this->createIndex('page/1/index.html', 'index.html');
 
         return $this->data;
     }
