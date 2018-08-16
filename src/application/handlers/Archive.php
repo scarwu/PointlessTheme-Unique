@@ -26,7 +26,7 @@ class Archive extends ThemeHandler
      */
     public function initData($data)
     {
-        $data['articleByArchive'] = $data;
+        $data['articleByArchive'] = [];
 
         foreach ($data['postBundle']['article'] as $post) {
             $archive = $post['year'];
@@ -58,11 +58,8 @@ class Archive extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $this->createIndex("archive/{$firstKey}/index.html", 'archive/index.html');
-
         $articleList = $this->data['articleByArchive'];
         $keys = array_keys($articleList);
-        $firstKey = $keys[0];
         $totalIndex = count($articleList);
 
         $containerList = [];
@@ -92,7 +89,11 @@ class Archive extends ThemeHandler
                 $container['paging']['nextUrl'] = "archive/{$nextKey}/";
             }
 
-            $containerList[] = $container;
+            if (0 === $currentIndex) {
+                $containerList['archive/'] = $container;
+            }
+
+            $containerList[$container['url']] = $container;
         }
 
         return $containerList;

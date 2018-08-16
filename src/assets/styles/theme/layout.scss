@@ -312,53 +312,58 @@ textarea {
     }
 }
 
-#container_page .social_tool > .twitter,
-#container_article .social_tool > .twitter {
-    padding-top: 3px;
+#container_page,
+#container_article {
+    .social_tool {
+        > .twitter {
+            padding-top: 3px;
+        }
+
+        > .google {
+            margin: 10px 0 -5px 0;
+        }
+    }
+
+    .info {
+        position: absolute;
+        padding: 15px;
+        width: 170px;
+        top: -1px;
+        left: -196px;
+        text-align: left;
+        background: #fff;
+        border: 1px solid #ccc;
+
+        @include border-radius(3px);
+        @include box-shadow(0px 0px 10px #bbb);
+    }
+
+    .more {
+        margin: 0 auto;
+        display: block;
+        text-align: center;
+    }
 }
 
-#container_page .social_tool > .google,
-#container_article .social_tool > .google {
-    margin: 10px 0 -5px 0;
-}
+#container_tag,
+#container_category,
+#container_archive {
+    .list {
+        margin-bottom: 20px;
 
-#container_page .info,
-#container_article .info {
-    position: absolute;
-    padding: 15px;
-    width: 170px;
-    top: -1px;
-    left: -196px;
-    text-align: left;
-    background: #fff;
-    border: 1px solid #ccc;
+        section {
+            > h1 {
+                margin-bottom: 5px;
+                font-size: 150%;
+                border: 1px solid;
+                border-color: transparent transparent #ccc transparent;
+            }
 
-    @include border-radius(3px);
-    @include box-shadow(0px 0px 10px #bbb);
-}
-
-#container_page .more {
-    margin: 0 auto;
-    display: block;
-    text-align: center;
-}
-
-#container_tag .list,
-#container_archive .list {
-    margin-bottom: 20px;
-}
-
-#container_tag .list section > h1,
-#container_archive .list section > h1 {
-    margin-bottom: 5px;
-    font-size: 150%;
-    border: 1px solid;
-    border-color: transparent transparent #ccc transparent;
-}
-
-#container_tag .list section > span,
-#container_archive .list section > span {
-    margin-right: 10px;
+            > span {
+                margin-right: 10px;
+            }
+        }
+    }
 }
 
 #disqus_thread {

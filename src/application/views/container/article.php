@@ -8,20 +8,24 @@ $disqusShortname = $systemConfig['blog']['disqusShortname'];
 // Paging
 $paging = $container['paging'];
 $prevButton = isset($paging['prevUrl'])
-    ? Helper::linkTo($paging['prevUrl'], "<< {$paging['prevTitle']}") : '';
+    ? Helper::linkTo("{$baseUrl}{$paging['prevUrl']}", "<< {$paging['prevTitle']}") : '';
 $nextButton = isset($paging['nextUrl'])
-    ? Helper::linkTo($paging['nextUrl'], "{$paging['nextTitle']} >>") : '';
+    ? Helper::linkTo("{$baseUrl}{$paging['nextUrl']}", "{$paging['nextTitle']} >>") : '';
 $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
 ?>
 <div id="container_article">
     <article class="post_block">
         <h1 class="title"><?=$container['title']?></h1>
         <div class="info">
-            <div class="date">
+            <div class="archive">
                 <i class="fa fa-calendar"></i>
                 <?=Helper::linkTo("{$baseUrl}archive/{$container['year']}/", $container['date'])?>
             </div>
-            <?php foreach ($container['tags'] as $index => $tag): ?>
+            <div class="category">
+                <i class="fa fa-folder"></i>
+                <?=Helper::linkTo("{$baseUrl}archive/{$container['category']}/", $container['category'])?>
+            </div>
+            <?php foreach ($container['tags'] as $tag): ?>
             <div class="tag">
                 <i class="fa fa-tag"></i>
                 <?=Helper::linkTo("{$baseUrl}tag/{$tag}/", $tag)?>
@@ -37,14 +41,14 @@ $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
             <div class="social_tool">
                 <div class="twitter">
                     <a class="twitter-share-button"
-                        data-url="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}/")?>"
+                        data-url="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}")?>"
                         data-text="<?="{$container['title']} | {$systemConfig['blog']['name']}"?>"
                         data-lang="en"
                         data-via="xneriscool"></a>
                 </div>
                 <div class="facebook">
                     <div class="fb-like"
-                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}/")?>"
+                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}")?>"
                         data-layout="button_count"
                         data-action="like"
                         data-show-faces="true"
@@ -52,7 +56,7 @@ $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
                 </div>
                 <div class="google">
                     <div class="g-plusone"
-                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}/")?>"
+                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}")?>"
                         data-size="medium"></div>
                 </div>
             </div>

@@ -46,6 +46,7 @@ class Article extends ThemeHandler
 
             // Set Container
             $container = $articleList[$key];
+            $container['url'] = "article/{$container['url']}";
 
             // Set Paging
             $container['paging'] = [];
@@ -55,16 +56,16 @@ class Article extends ThemeHandler
             if (isset($keys[$currentIndex - 1])) {
                 $prevKey = $keys[$currentIndex - 1];
                 $container['paging']['prevTitle'] = $articleList[$prevKey]['title'];
-                $container['paging']['prevUrl'] = "article/{$articleList[$prevKey]['url']}/";
+                $container['paging']['prevUrl'] = "article/{$articleList[$prevKey]['url']}";
             }
 
             if (isset($keys[$currentIndex + 1])) {
                 $nextKey = $keys[$currentIndex + 1];
                 $container['paging']['nextTitle'] = $articleList[$nextKey]['title'];
-                $container['paging']['nextUrl'] = "article/{$articleList[$nextKey]['url']}/";
+                $container['paging']['nextUrl'] = "article/{$articleList[$nextKey]['url']}";
             }
 
-            $containerList[] = $container;
+            $containerList[$container['url']] = $container;
         }
 
         return $containerList;

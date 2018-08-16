@@ -45,12 +45,8 @@ class Page extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $this->createIndex('page/1/index.html', 'page/index.html');
-        // $this->createIndex('page/1/index.html', 'index.html');
-
         $articleList = $this->data['articleByPage'];
         $keys = array_keys($articleList);
-        $firstKey = $keys[0];
         $totalIndex = count($articleList);
 
         $containerList = [];
@@ -59,7 +55,7 @@ class Page extends ThemeHandler
 
             // Set Post
             $container = [];
-            $container['url'] = "page/{$currentIndex}/";
+            $container['url'] = "page/{$key}/";
             $container['list'] = $articleList[$key];
 
             // Set Paging
@@ -79,7 +75,12 @@ class Page extends ThemeHandler
                 $container['paging']['nextUrl'] = "page/{$nextKey}/";
             }
 
-            $containerList[] = $container;
+            if (0 === $currentIndex) {
+                $containerList['/'] = $container;
+                $containerList['page/'] = $container;
+            }
+
+            $containerList[$container['url']] = $container;
         }
 
         return $containerList;

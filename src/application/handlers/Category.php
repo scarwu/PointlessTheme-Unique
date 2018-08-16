@@ -26,19 +26,19 @@ class Category extends ThemeHandler
      */
     public function initData($data)
     {
-        $data['articleByArchive'] = [];
+        $data['articleByCategory'] = [];
 
         foreach ($data['postBundle']['article'] as $post) {
             $category = $post['category'];
 
-            if (!isset($data['articleByArchive'][$category])) {
-                $data['articleByArchive'][$category] = [];
+            if (!isset($data['articleByCategory'][$category])) {
+                $data['articleByCategory'][$category] = [];
             }
 
-            $data['articleByArchive'][$category][] = $post;
+            $data['articleByCategory'][$category][] = $post;
         }
 
-        uasort($data['articleByArchive'], function ($a, $b) {
+        uasort($data['articleByCategory'], function ($a, $b) {
             if (count($a) === count($b)) {
                 return 0;
             }
@@ -56,7 +56,7 @@ class Category extends ThemeHandler
      */
     public function getSideData()
     {
-        return $this->data['articleByArchive'];
+        return $this->data['articleByCategory'];
     }
 
     /**
@@ -66,11 +66,8 @@ class Category extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $this->createIndex("category/{$firstKey}/index.html", 'category/index.html');
-
-        $articleList = $this->data['articleByArchive'];
+        $articleList = $this->data['articleByCategory'];
         $keys = array_keys($articleList);
-        $firstKey = $keys[0];
         $totalIndex = count($articleList);
 
         $containerList = [];
@@ -80,7 +77,7 @@ class Category extends ThemeHandler
             // Set Post
             $container = [];
             $container['title'] ="Category: {$key}";
-            $container['url'] = "category/{$key}";
+            $container['url'] = "category/{$key}/";
             $container['list'] = $articleList[$key];
 
             // Set Paging
@@ -100,7 +97,11 @@ class Category extends ThemeHandler
                 $container['paging']['nextUrl'] = "category/{$nextKey}";
             }
 
-            $containerList[] = $container;
+            if (0 === $currentIndex) {
+                $containerList['category/'] = $container;
+            }
+
+            $containerList[$container['url']] = $container;
         }
 
         return $containerList;

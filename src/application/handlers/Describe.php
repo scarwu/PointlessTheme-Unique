@@ -36,6 +36,12 @@ class Describe extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        return $this->data['postBundle']['describe'];
+        $containerList = [];
+
+        foreach ($this->data['postBundle']['describe'] as $post) {
+            $containerList[$post['url']] = $post;
+        }
+
+        return $containerList;
     }
 }

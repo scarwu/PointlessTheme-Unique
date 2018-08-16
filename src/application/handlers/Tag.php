@@ -60,11 +60,8 @@ class Tag extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $this->createIndex("/tag/{$firstKey}/index.html", 'tag/index.html');
-
         $articleList = $this->data['articleByTag'];
         $keys = array_keys($articleList);
-        $firstKey = $keys[0];
         $totalIndex = count($articleList);
 
         $containerList = [];
@@ -94,7 +91,11 @@ class Tag extends ThemeHandler
                 $container['paging']['nextUrl'] = "tag/{$nextKey}/";
             }
 
-            $containerList[] = $container;
+            if (0 === $currentIndex) {
+                $containerList['tag/'] = $container;
+            }
+
+            $containerList[$container['url']] = $container;
         }
 
         return $containerList;

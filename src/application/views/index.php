@@ -23,16 +23,16 @@ $description = (!isset($container['description']) || '' === $container['descript
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta property="og:description" name="description" content="<?=$description?>">
     <meta property="og:title" content="<?=$title?>">
-    <meta property="og:url" content="//<?=$domainName . $baseUrl . $container['url']?>">
-    <meta property="og:image" content="//<?=$domainName . $baseUrl?>images/icon.jpg">
+    <meta property="og:url" content="//<?="{$domainName}{$baseUrl}{$container['url']}"?>">
+    <meta property="og:image" content="//<?="{$domainName}{$baseUrl}"?>images/icon.jpg">
     <meta property="og:type" content="blog">
 
     <title><?=$title?></title>
 
-    <link rel="canonical" href="//<?=$domainName . $baseUrl . $container['url']?>">
+    <link rel="canonical" href="//<?="{$domainName}{$baseUrl}{$container['url']}"?>">
     <link rel="author" href="//plus.google.com/+ScarWu">
-    <link rel="image_src" href="//<?=$domainName . $baseUrl?>images/icon.jpg">
-    <link rel="shortcut icon" href="//<?=$domainName . $baseUrl?>favicon.ico">
+    <link rel="image_src" href="//<?="{$domainName}{$baseUrl}"?>images/icon.jpg">
+    <link rel="shortcut icon" href="//<?="{$domainName}{$baseUrl}"?>favicon.ico">
     <link rel="stylesheet" href="<?=$baseUrl?>assets/styles/theme.min.css">
 
     <script src="<?=$baseUrl?>assets/scripts/vendor/modernizr.min.js"></script>
@@ -66,16 +66,14 @@ $description = (!isset($container['description']) || '' === $container['descript
 
     <nav id="nav">
         <span class="left">
-            <a href="<?="{$baseUrl}archive/"?>">Archive</a>
-            <a href="<?="{$baseUrl}tag/"?>">Tag</a>
+            <a href="<?=$baseUrl?>works/">Works</a>
         </span>
         <span class="home">
             <a href="<?=$baseUrl?>">Home</a>
             <span class="arrow"></span>
         </span>
         <span class="right">
-            <a href="<?="{$baseUrl}works/"?>">Works</a>
-            <a href="<?="{$baseUrl}atom.xml"?>">RSS</a>
+            <a href="<?=$baseUrl?>atom.xml">RSS</a>
         </span>
     </nav>
 
