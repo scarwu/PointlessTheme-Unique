@@ -24,9 +24,18 @@ class Page extends ThemeHandler
      *
      * @param array
      */
-    public function initData($postBundle)
+    public function initData($data)
     {
-        $this->data = $postBundle['article'];
+        $data['articleByPage'] = [];
+        $articleList = $data['postBundle']['article'];
+        $quantity = $data['systemConfig']['post']['article']['quantity'];
+        $totalIndex = ceil(count($articleList) / $quantity);
+
+        for ($currentIndex = 1; $currentIndex <= $totalIndex; $currentIndex++) {
+            $data['articleByPage'][$currentIndex] = array_slice($articleList, $quantity * ($currentIndex - 1), $quantity);
+        }
+
+        $this->data = $data;
     }
 
     /**
@@ -36,43 +45,43 @@ class Page extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $extBlog['title'] = $blog['name'];
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-
         // $this->createIndex('page/1/index.html', 'page/index.html');
         // $this->createIndex('page/1/index.html', 'index.html');
 
-        $quantity = 10; // TODO: from system:config article/quantity
-        $totalIndex = ceil(count($this->data) / $quantity);
+        $articleList = $this->data['articleByPage'];
+        $keys = array_keys($articleList);
+        $firstKey = $keys[0];
+        $totalIndex = count($articleList);
 
-        for ($currentIndex = 0;$currentIndex < $totalIndex;$currentIndex++) {
+        $containerList = [];
+
+        foreach ($keys as $currentIndex => $key) {
 
             // Set Post
-            $post = [];
-            $post['url'] = "page/{$currentIndex}/";
-            $post['list'] = array_slice($this->data, $quantity * ($currentIndex - 1), $quantity);
+            $container = [];
+            $container['url'] = "page/{$currentIndex}/";
+            $container['list'] = $articleList[$key];
 
             // Set Paging
-            $paging = [];
-            $paging['totalIndex'] = $totalIndex;
-            $paging['currentIndex'] = $currentIndex + 1;
+            $container['paging'] = [];
+            $container['paging']['totalIndex'] = $totalIndex;
+            $container['paging']['currentIndex'] = $currentIndex + 1;
 
-            if ($currentIndex - 1 >= 0) {
-                $prevKey = $currentIndex - 1;
-
-                $paging['prevTitle'] = $prevKey;
-                $paging['prevUrl'] = "page/{$prevKey}/";
+            if (isset($keys[$currentIndex - 1])) {
+                $prevKey = $keys[$currentIndex - 1];
+                $container['paging']['prevTitle'] = $prevKey;
+                $container['paging']['prevUrl'] = "page/{$prevKey}/";
             }
 
-            if ($currentIndex + 1 < $totalIndex) {
-                $nextKey = $currentIndex + 1;
-
-                $paging['nextTitle'] = $nextKey;
-                $paging['nextUrl'] = "page/{$nextKey}/";
+            if (isset($keys[$currentIndex + 1])) {
+                $nextKey = $keys[$currentIndex + 1];
+                $container['paging']['nextTitle'] = $nextKey;
+                $container['paging']['nextUrl'] = "page/{$nextKey}/";
             }
 
+            $containerList[] = $container;
         }
 
-        return $this->data;
+        return $containerList;
     }
 }

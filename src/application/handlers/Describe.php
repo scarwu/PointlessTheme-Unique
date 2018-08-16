@@ -24,9 +24,9 @@ class Describe extends ThemeHandler
      *
      * @param array
      */
-    public function initData($postBundle)
+    public function initData($data)
     {
-        $this->data = $postBundle['describe'];
+        $this->data = $data;
     }
 
     /**
@@ -36,9 +36,6 @@ class Describe extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-
-        return $this->data;
+        return $this->data['postBundle']['describe'];
     }
 }

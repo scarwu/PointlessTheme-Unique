@@ -24,9 +24,9 @@ class Article extends ThemeHandler
      *
      * @param array
      */
-    public function initData($postBundle)
+    public function initData($data)
     {
-        $this->data = $postBundle['article'];
+        $this->data = $data;
     }
 
     /**
@@ -36,46 +36,37 @@ class Article extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
-        // $extBlog['description'] = '' !== $post['description']
-        //     ? $post['description'] : $blog['description'];
+        $articleList = $this->data['postBundle']['article'];
+        $keys = array_keys($articleList);
+        $totalIndex = count($articleList);
 
-        $keys = array_keys($this->data);
-        $totalIndex = count($this->data);
-        $currentIndex = 0;
+        $containerList = [];
 
-        foreach ($this->data as $key => $post) {
+        foreach ($keys as $currentIndex => $key) {
+
+            // Set Container
+            $container = $articleList[$key];
 
             // Set Paging
-            $paging = [];
-            $paging['totalIndex'] = $totalIndex;
-            $paging['currentIndex'] = $currentIndex + 1;
+            $container['paging'] = [];
+            $container['paging']['totalIndex'] = $totalIndex;
+            $container['paging']['currentIndex'] = $currentIndex + 1;
 
             if (isset($keys[$currentIndex - 1])) {
                 $prevKey = $keys[$currentIndex - 1];
-                $title = $this->data[$prevKey]['title'];
-                $url = $this->data[$prevKey]['url'];
-
-                $paging['prevTitle'] = $title;
-                $paging['prevUrl'] = "article/{$url}/";
+                $container['paging']['prevTitle'] = $articleList[$prevKey]['title'];
+                $container['paging']['prevUrl'] = "article/{$articleList[$prevKey]['url']}/";
             }
 
             if (isset($keys[$currentIndex + 1])) {
                 $nextKey = $keys[$currentIndex + 1];
-                $title = $this->data[$nextKey]['title'];
-                $url = $this->data[$nextKey]['url'];
-
-                $paging['nextTitle'] = $title;
-                $paging['nextUrl'] = "article/{$url}/";
+                $container['paging']['nextTitle'] = $articleList[$nextKey]['title'];
+                $container['paging']['nextUrl'] = "article/{$articleList[$nextKey]['url']}/";
             }
 
-            $post['paging'] = $paging;
-            $this->data[$key] = $post;
-
-            $currentIndex++;
+            $containerList[] = $container;
         }
 
-        return $this->data;
+        return $containerList;
     }
 }

@@ -1,8 +1,6 @@
 <?php
 $lang = $systemConfig['blog']['lang'];
-$name = $systemConfig['blog']['name'];
 $slogan = $systemConfig['blog']['slogan'];
-$description = $systemConfig['blog']['description'];
 $footer = $systemConfig['blog']['footer'];
 
 $domainName = $systemConfig['blog']['domainName'];
@@ -12,7 +10,11 @@ $googleAnalytics = $systemConfig['blog']['googleAnalytics'];
 $disqusShortname = $systemConfig['blog']['disqusShortname'];
 
 $title = isset($container['title'])
-    ? "{$container['title']} | {$name}" : $name;
+    ? "{$container['title']} | {$systemConfig['blog']['name']}"
+    : $systemConfig['blog']['name'];
+$description = (!isset($container['description']) || '' === $container['description'])
+    ? $systemConfig['blog']['description']
+    : $container['description'];
 ?>
 <!doctype html>
 <html class="no-js" style="display: block !important;" lang="<?=$lang?>">

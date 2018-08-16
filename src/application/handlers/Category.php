@@ -24,27 +24,29 @@ class Category extends ThemeHandler
      *
      * @param array
      */
-    public function initData($postBundle)
+    public function initData($data)
     {
-        $this->data = [];
+        $data['articleByArchive'] = [];
 
-        foreach ($postBundle['article'] as $post) {
+        foreach ($data['postBundle']['article'] as $post) {
             $category = $post['category'];
 
-            if (!isset($this->data[$category])) {
-                $this->data[$category] = [];
+            if (!isset($data['articleByArchive'][$category])) {
+                $data['articleByArchive'][$category] = [];
             }
 
-            $this->data[$category][] = $post;
+            $data['articleByArchive'][$category][] = $post;
         }
 
-        uasort($this->data, function ($a, $b) {
+        uasort($data['articleByArchive'], function ($a, $b) {
             if (count($a) === count($b)) {
                 return 0;
             }
 
             return count($a) > count($b) ? -1 : 1;
         });
+
+        $this->data = $data;
     }
 
     /**
@@ -54,7 +56,7 @@ class Category extends ThemeHandler
      */
     public function getSideData()
     {
-        return $this->data;
+        return $this->data['articleByArchive'];
     }
 
     /**
@@ -64,69 +66,43 @@ class Category extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $blog['dn'] . $blog['base'];
+        // $this->createIndex("category/{$firstKey}/index.html", 'category/index.html');
 
-        // $this->createIndex("category/{$first}/index.html", 'category/index.html');
-
-        $keys = array_keys($this->data);
+        $articleList = $this->data['articleByArchive'];
+        $keys = array_keys($articleList);
         $firstKey = $keys[0];
+        $totalIndex = count($articleList);
 
-        $totalIndex = count($this->data);
-        $currentIndex = 0;
+        $containerList = [];
 
-        foreach ($this->data as $key => $postList) {
+        foreach ($keys as $currentIndex => $key) {
 
             // Set Post
-            $post = [];
-            $post['title'] ="Category: {$key}";
-            $post['url'] = "category/{$key}";
-            $post['list'] = $this->createDateList($postList);
+            $container = [];
+            $container['title'] ="Category: {$key}";
+            $container['url'] = "category/{$key}";
+            $container['list'] = $articleList[$key];
 
             // Set Paging
-            $paging = [];
-            $paging['totalIndex'] = $totalIndex;
-            $paging['currentIndex'] = $currentIndex + 1;
+            $container['paging'] = [];
+            $container['paging']['totalIndex'] = $totalIndex;
+            $container['paging']['currentIndex'] = $currentIndex + 1;
 
             if (isset($keys[$currentIndex - 1])) {
                 $prevKey = $keys[$currentIndex - 1];
-
-                $paging['prevTitle'] = $prevKey;
-                $paging['prevUrl'] = "category/{$prevKey}";
+                $container['paging']['prevTitle'] = $prevKey;
+                $container['paging']['prevUrl'] = "category/{$prevKey}";
             }
 
             if (isset($keys[$currentIndex + 1])) {
                 $nextKey = $keys[$currentIndex + 1];
-
-                $paging['nextTitle'] = $nextKey;
-                $paging['nextUrl'] = "category/{$nextKey}";
+                $container['paging']['nextTitle'] = $nextKey;
+                $container['paging']['nextUrl'] = "category/{$nextKey}";
             }
 
-            $currentIndex++;
+            $containerList[] = $container;
         }
 
-        return $this->data;
-    }
-
-    private function createDateList($list)
-    {
-        $result = [];
-
-        foreach ($list as $article) {
-            $year = $article['year'];
-            $month = $article['month'];
-
-            if (!isset($result[$year])) {
-                $result[$year] = [];
-            }
-
-            if (!isset($result[$year][$month])) {
-                $result[$year][$month] = [];
-            }
-
-            $result[$year][$month][] = $article;
-        }
-
-        return $result;
+        return $containerList;
     }
 }

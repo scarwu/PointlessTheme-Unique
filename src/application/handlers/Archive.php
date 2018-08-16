@@ -24,19 +24,21 @@ class Archive extends ThemeHandler
      *
      * @param array
      */
-    public function initData($postBundle)
+    public function initData($data)
     {
-        $this->data = [];
+        $data['articleByArchive'] = $data;
 
-        foreach ($postBundle['article'] as $post) {
+        foreach ($data['postBundle']['article'] as $post) {
             $archive = $post['year'];
 
-            if (!isset($this->data[$archive])) {
-                $this->data[$archive] = [];
+            if (!isset($data['articleByArchive'][$archive])) {
+                $data['articleByArchive'][$archive] = [];
             }
 
-            $this->data[$archive][] = $post;
+            $data['articleByArchive'][$archive][] = $post;
         }
+
+        $this->data = $data;
     }
 
     /**
@@ -46,7 +48,7 @@ class Archive extends ThemeHandler
      */
     public function getSideData()
     {
-        return $this->data;
+        return $this->data['articleByArchive'];
     }
 
     /**
@@ -56,47 +58,43 @@ class Archive extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'] . $post['url'];
+        // $this->createIndex("archive/{$firstKey}/index.html", 'archive/index.html');
 
-        // $this->createIndex("archive/{$first}/index.html", 'archive/index.html');
-
-        $keys = array_keys($this->data);
+        $articleList = $this->data['articleByArchive'];
+        $keys = array_keys($articleList);
         $firstKey = $keys[0];
+        $totalIndex = count($articleList);
 
-        $totalIndex = count($this->data);
-        $currentIndex = 0;
+        $containerList = [];
 
-        foreach ($this->data as $key => $postList) {
+        foreach ($keys as $currentIndex => $key) {
 
             // Set Post
-            $post = [];
-            $post['title'] = "Archive: {$key}";
-            $post['url'] = "archive/{$key}/";
-            $post['list'] = $postList;
+            $container = [];
+            $container['title'] = "Archive: {$key}";
+            $container['url'] = "archive/{$key}/";
+            $container['list'] = $articleList[$key];
 
             // Set Paging
-            $paging = [];
-            $paging['totalIndex'] = $totalIndex;
-            $paging['currentIndex'] = $currentIndex + 1;
+            $container['paging'] = [];
+            $container['paging']['totalIndex'] = $totalIndex;
+            $container['paging']['currentIndex'] = $currentIndex + 1;
 
             if (isset($keys[$currentIndex - 1])) {
                 $prevKey = $keys[$currentIndex - 1];
-
-                $paging['prevTitle'] = $prevKey;
-                $paging['prevUrl'] = "archive/{$prevKey}/";
+                $container['paging']['prevTitle'] = $prevKey;
+                $container['paging']['prevUrl'] = "archive/{$prevKey}/";
             }
 
             if (isset($keys[$currentIndex + 1])) {
                 $nextKey = $keys[$currentIndex + 1];
-
-                $paging['nextTitle'] = $nextKey;
-                $paging['nextUrl'] = "archive/{$nextKey}/";
+                $container['paging']['nextTitle'] = $nextKey;
+                $container['paging']['nextUrl'] = "archive/{$nextKey}/";
             }
 
-            $currentIndex++;
+            $containerList[] = $container;
         }
 
-        return $this->data;
+        return $containerList;
     }
 }

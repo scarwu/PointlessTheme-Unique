@@ -24,21 +24,23 @@ class Tag extends ThemeHandler
      *
      * @param array
      */
-    public function initData($postBundle)
+    public function initData($data)
     {
-        $this->data = [];
+        $data['articleByTag'] = [];
 
-        foreach ($postBundle['article'] as $post) {
+        foreach ($data['postBundle']['article'] as $post) {
             foreach ($post['tags'] as $tag) {
-                if (!isset($this->data[$tag])) {
-                    $this->data[$tag] = [];
+                if (!isset($data['articleByTag'][$tag])) {
+                    $data['articleByTag'][$tag] = [];
                 }
 
-                $this->data[$tag][] = $post;
+                $data['articleByTag'][$tag][] = $post;
             }
         }
 
-        ksort($this->data);
+        ksort($data['articleByTag']);
+
+        $this->data = $data;
     }
 
     /**
@@ -48,7 +50,7 @@ class Tag extends ThemeHandler
      */
     public function getSideData()
     {
-        return $this->data;
+        return $this->data['articleByTag'];
     }
 
     /**
@@ -58,47 +60,43 @@ class Tag extends ThemeHandler
      */
     public function getContainerDataList()
     {
-        // $extBlog['title'] = "{$post['title']} | {$blog['name']}";
-        // $extBlog['url'] = $system['blog']['domainName'] . $system['blog']['baseUrl'];
+        // $this->createIndex("/tag/{$firstKey}/index.html", 'tag/index.html');
 
-        // $this->createIndex("/tag/{$first}/index.html", 'tag/index.html');
-
-        $keys = array_keys($this->data);
+        $articleList = $this->data['articleByTag'];
+        $keys = array_keys($articleList);
         $firstKey = $keys[0];
+        $totalIndex = count($articleList);
 
-        $totalIndex = count($this->data);
-        $currentIndex = 0;
+        $containerList = [];
 
-        foreach ($this->data as $key => $postList) {
+        foreach ($keys as $currentIndex => $key) {
 
             // Set Post
-            $post = [];
-            $post['title'] = "Tag: {$key}";
-            $post['url'] = "tag/{$key}/";
-            $post['list'] = $postList;
+            $container = [];
+            $container['title'] = "Tag: {$key}";
+            $container['url'] = "tag/{$key}/";
+            $container['list'] = $articleList[$key];
 
             // Set Paging
-            $paging = [];
-            $paging['totalIndex'] = $totalIndex;
-            $paging['currentIndex'] = $currentIndex + 1;
+            $container['paging'] = [];
+            $container['paging']['totalIndex'] = $totalIndex;
+            $container['paging']['currentIndex'] = $currentIndex + 1;
 
             if (isset($keys[$currentIndex - 1])) {
                 $prevKey = $keys[$currentIndex - 1];
-
-                $paging['prevTitle'] = $prevKey;
-                $paging['prevUrl'] = "tag/{$prevKey}/";
+                $container['paging']['prevTitle'] = $prevKey;
+                $container['paging']['prevUrl'] = "tag/{$prevKey}/";
             }
 
             if (isset($keys[$currentIndex + 1])) {
                 $nextKey = $keys[$currentIndex + 1];
-
-                $paging['nextTitle'] = $nextKey;
-                $paging['nextUrl'] = "tag/{$nextKey}/";
+                $container['paging']['nextTitle'] = $nextKey;
+                $container['paging']['nextUrl'] = "tag/{$nextKey}/";
             }
 
-            $currentIndex++;
+            $containerList[] = $container;
         }
 
-        return $this->data;
+        return $containerList;
     }
 }
