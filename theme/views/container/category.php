@@ -11,7 +11,7 @@ $nextButton = isset($paging['nextUrl'])
     ? Helper::linkTo("{$baseUrl}{$paging['nextUrl']}", "{$paging['nextTitle']} >>") : '';
 $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
 ?>
-<div id="container_archive">
+<div id="container_category">
     <article class="post_block">
         <h1 class="title"><?=$container['title']?></h1>
         <div class="list">

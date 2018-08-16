@@ -174,13 +174,28 @@ gulp.task('watch', function () {
  * Release
  */
 // Copy
-gulp.task('release:copy:theme', function () {
-    return gulp.src([
-            'src/boot/assets',
-            'src/application/handlers',
-            'src/application/views',
-            'src/application/config.php'
-        ])
+gulp.task('release:copy:assets', function () {
+    return gulp.src('src/boot/assets/**/*')
+        .pipe(gulp.dest('theme/assets'));
+});
+
+gulp.task('release:copy:extensions', function () {
+    return gulp.src('src/application/extensions/**/*')
+        .pipe(gulp.dest('theme/extensions'));
+});
+
+gulp.task('release:copy:handlers', function () {
+    return gulp.src('src/application/handlers/**/*')
+        .pipe(gulp.dest('theme/handlers'));
+});
+
+gulp.task('release:copy:views', function () {
+    return gulp.src('src/application/views/**/*')
+        .pipe(gulp.dest('theme/views'));
+});
+
+gulp.task('release:copy:config', function () {
+    return gulp.src('src/application/config.php')
         .pipe(gulp.dest('theme'));
 });
 
@@ -208,7 +223,7 @@ gulp.task('release:optimize:images', function () {
  */
 gulp.task('clean', function (callback) {
     return del([
-        'release',
+        'theme',
         'src/boot'
     ], callback);
 });
@@ -248,7 +263,11 @@ gulp.task('release', function (callback) {
     ENVIRONMENT = 'production';
 
     run('prepare', [
-        'release:copy:theme'
+        'release:copy:assets',
+        'release:copy:extensions',
+        'release:copy:handlers',
+        'release:copy:views',
+        'release:copy:config'
     ], [
         'release:optimize:images',
         'release:optimize:scripts',

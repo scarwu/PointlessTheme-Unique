@@ -1,71 +1,42 @@
+<?php
+$lang = $systemConfig['blog']['lang'];
+$slogan = $systemConfig['blog']['slogan'];
+$footer = $systemConfig['blog']['footer'];
+
+$domainName = $systemConfig['blog']['domainName'];
+$baseUrl = $systemConfig['blog']['baseUrl'];
+
+$googleAnalytics = $systemConfig['blog']['googleAnalytics'];
+$disqusShortname = $systemConfig['blog']['disqusShortname'];
+
+$title = isset($container['title'])
+    ? "{$container['title']} | {$systemConfig['blog']['name']}"
+    : $systemConfig['blog']['name'];
+$description = (!isset($container['description']) || '' === $container['description'])
+    ? $systemConfig['blog']['description']
+    : $container['description'];
+?>
 <!doctype html>
-<html lang="<?=$blog['lang']?>">
+<html class="no-js" style="display: block !important;" lang="<?=$lang?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta property="og:description" name="description" content="<?=$blog['description']?>">
-    <meta property="og:title" content="<?=$blog['title']?>">
-    <meta property="og:url" content="https://<?=$blog['url'] . $post['url']?>">
-    <meta property="og:image" content="https://<?=$blog['url']?>images/icon.jpg">
+    <meta property="og:description" name="description" content="<?=$description?>">
+    <meta property="og:title" content="<?=$title?>">
+    <meta property="og:url" content="//<?="{$domainName}{$baseUrl}{$container['url']}"?>">
+    <meta property="og:image" content="//<?="{$domainName}{$baseUrl}"?>images/icon.jpg">
     <meta property="og:type" content="blog">
 
-    <title><?=$blog['title']?></title>
+    <title><?=$title?></title>
 
-    <?php if(null != $blog['google_analytics']): ?>
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <link rel="canonical" href="//<?="{$domainName}{$baseUrl}{$container['url']}"?>">
+    <link rel="author" href="//plus.google.com/+ScarWu">
+    <link rel="image_src" href="//<?="{$domainName}{$baseUrl}"?>images/icon.jpg">
+    <link rel="shortcut icon" href="//<?="{$domainName}{$baseUrl}"?>favicon.ico">
+    <link rel="stylesheet" href="<?=$baseUrl?>assets/styles/theme.min.css">
 
-        ga('create', '<?=$blog['google_analytics']?>', 'auto');
-        ga('send', 'pageview');
-    </script>
-    <?php endif; ?>
-
-    <link rel="stylesheet" href="<?=$blog['base']?>assets/styles.css">
-    <link rel="canonical" href="https://<?=$blog['url'] . $post['url']?>">
-    <link rel="author" href="https://plus.google.com/+ScarWu">
-    <link rel="image_src" href="https://<?=$blog['url']?>images/icon.jpg">
-    <link rel="shortcut icon" href="https://<?=$blog['url']?>favicon.ico">
-</head>
-<body>
-    <hgroup id="header">
-        <h1><a href="/">ScarShow</a></h1>
-        <h2><?=$blog['slogan']?></h2>
-    </hgroup>
-    <nav id="nav">
-        <span class="left">
-            <a href="<?="{$blog['base']}archive/"?>">Archive</a>
-            <a href="<?="{$blog['base']}tag/"?>">Tag</a>
-        </span>
-        <span class="home">
-            <a href="<?=$blog['base']?>">Home</a>
-            <span class="arrow"></span>
-        </span>
-        <span class="right">
-            <a href="<?="{$blog['base']}works/"?>">Works</a>
-            <a href="<?="{$blog['base']}atom.xml"?>">RSS</a>
-        </span>
-    </nav>
-    <div id="main">
-        <div id="container"><?=$block['container']?></div>
-        <div id="side">
-            <div id="side_search">
-                <i class="fa fa-search"></i>
-                <form action="https://www.google.com/search?q=as" target="_blank" method="get">
-                    <input type="hidden" name="q" value="site:<?=$blog['dn']?>">
-                    <input type="text" name="q" placeholder="Search">
-                    <input type="submit">
-                </form>
-            </div>
-            <?=$block['side']?>
-        </div>
-    </div>
-    <footer id="footer">
-        <span><?=$blog['footer']?></span>
-        <p>Powered by Pointless</p>
-    </footer>
+    <script src="<?=$baseUrl?>assets/scripts/vendor/modernizr.min.js"></script>
+    <script src="<?=$baseUrl?>assets/scripts/theme.min.js" async></script>
 
     <script>
         function asyncLoad(src) {
@@ -74,22 +45,83 @@
             var e = document.getElementsByTagName('script')[0];
             e.parentNode.insertBefore(s, e);
         }
-        <?php if(null != $blog['disqus_shortname']): ?>
-        var disqus_shortname = '<?=$blog['disqus_shortname']?>';
+    </script>
+    <?php if(null !== $googleAnalytics): ?>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '<?=$googleAnalytics?>', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <?php endif; ?>
+</head>
+<body>
+    <hgroup id="header">
+        <h1><a href="/">ScarShow</a></h1>
+        <h2><?=$slogan?></h2>
+    </hgroup>
+
+    <nav id="nav">
+        <span class="left">
+            <a href="<?=$baseUrl?>works/">Works</a>
+        </span>
+        <span class="home">
+            <a href="<?=$baseUrl?>">Home</a>
+            <span class="arrow"></span>
+        </span>
+        <span class="right">
+            <a href="<?=$baseUrl?>atom.xml">RSS</a>
+        </span>
+    </nav>
+
+    <div id="main">
+        <div id="container">
+            <?=$this->loadContent()?>
+        </div>
+        <div id="side">
+            <div id="side_search">
+                <i class="fa fa-search"></i>
+                <form action="//www.google.com/search?q=as" target="_blank" method="get">
+                    <input type="hidden" name="q" value="site:<?=$domainName?>">
+                    <input type="text" name="q" placeholder="Search">
+                    <input type="submit">
+                </form>
+            </div>
+            <?php foreach ($themeConfig['views']['side'] as $name): ?>
+            <?=$this->loadPartial("side/{$name}")?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <span><?=$footer?></span>
+        <p>Powered by Pointless</p>
+    </footer>
+
+    <div id="fb-root"></div>
+
+    <?php if(null !== $disqusShortname): ?>
+    <script>
+        var disqusShortname = '<?=$disqusShortname?>';
+
         if (document.getElementsByTagName('disqus_comments')) {
-            asyncLoad('//' + disqus_shortname + '.disqus.com/count.js');
+            asyncLoad('//' + disqusShortname + '.disqus.com/count.js');
         }
+
         if (document.getElementById('disqus_thread')) {
-            asyncLoad('//' + disqus_shortname + '.disqus.com/embed.js');
+            asyncLoad('//' + disqusShortname + '.disqus.com/embed.js');
         }
-        <?php endif; ?>
+    </script>
+    <?php endif; ?>
+    <script>
         if (document.getElementsByTagName('social_tool')) {
-            asyncLoad('https://apis.google.com/js/plusone.js');
+            asyncLoad('//apis.google.com/js/plusone.js');
             asyncLoad('//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=1403512429930397&version=v2.0');
             asyncLoad('//platform.twitter.com/widgets.js');
         }
     </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.1/modernizr.min.js" async></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js" data-main="<?=$blog['base']?>assets/scripts" async></script>
 </body>
 </html>

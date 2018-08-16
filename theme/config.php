@@ -9,31 +9,32 @@
  */
 
 $config = [
-    'assets' => [
-        'scripts' => [
-            'theme'
-        ],
-        'styles' => [
-            'theme'
-        ]
-    ],
-    'views' => [
-        'side' => [
-            'about',
-            'archive',
-            'tag'
-        ]
-    ],
-    'handlers' => [
-        'About',
-        'StaticPage',
-        'Article',
-        'Page',
-        'Archive',
-        'Tag'
-    ],
     'extensions' => [
         'Atom',
         'Sitemap'
+    ],
+    'handlers' => [
+        'Describe',
+        'Article',
+        'Page',
+        'Archive',
+        'Category',
+        'Tag'
+    ],
+    'views' => [
+        'container' => [
+            'describe',
+            'article',
+            'page',
+            'archive',
+            'category',
+            'tag'
+        ],
+        'side' => [
+            'about',
+            'archive',
+            'category',
+            'tag'
+        ]
     ]
 ];

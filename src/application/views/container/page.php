@@ -24,7 +24,7 @@ $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
             </div>
             <div class="category">
                 <i class="fa fa-folder"></i>
-                <?=Helper::linkTo("{$baseUrl}archive/{$article['category']}/", $article['category'])?>
+                <?=Helper::linkTo("{$baseUrl}category/{$article['category']}/", $article['category'])?>
             </div>
             <?php foreach ($article['tags'] as $index =>  $tag): ?>
             <div class="tag">
