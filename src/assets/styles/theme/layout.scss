@@ -59,11 +59,11 @@ textarea {
     background: #fff;
 
     h1 {
-        margin: -15px 0 -45px 0;
+        margin: -5px 0 -30px 0;
         font-family: ITCEDSCR;
         font-weight: normal;
 
-        @include font-size(14);
+        @include font-size(8);
     }
 
     h2 {
@@ -163,14 +163,21 @@ textarea {
     max-width: 1125px;
 
     .title {
-        margin-top: 0;
+        margin: 0 0 20px 0;
         text-align: center;
+
+        @include font-size(2);
     }
 
     .content {
         h2 {
-            border: 1px solid;
-            border-color: transparent transparent #ccc transparent;
+            border-bottom: 1px solid #ccc;
+
+            @include font-size(1.6);
+        }
+
+        h3 {
+            @include font-size(1.4);
         }
 
         ul {
@@ -202,10 +209,11 @@ textarea {
         code {
             padding: 1px 5px;
             margin: 0 3px;
+            border: 1px solid #ddd;
             font-family: 'monospace', 'Courier';
             font-size: 80%;
             background: #eee;
-            border: 1px solid #ddd;
+            color: #222;
 
             @include border-radius(5px);
         }
@@ -368,7 +376,7 @@ textarea {
 
 #disqus_thread {
     margin: -25px 0 50px 0;
-    padding: 20px 50px 0 50px;
+    padding: 20px 50px;
     background: #fff;
     border: 1px solid #ccc;
 
