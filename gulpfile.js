@@ -20,18 +20,6 @@ var webpackConfig = require('./webpack.config.js');
 
 var postfix = (new Date()).getTime().toString();
 
-function createSrcAndDest(path) {
-    var src = path.replace(process.env.PWD + '/', '');
-    var dest = src.replace('src/assets', 'src/boot/assets').split('/');
-
-    dest.pop();
-
-    return {
-        src: src,
-        dest: dest.join('/')
-    };
-}
-
 function handleCompileError(event) {
     $.util.log($.util.colors.red(event.message), 'error.');
 }
@@ -78,10 +66,7 @@ var compileTask = {
  * Copy Files & Folders
  */
 gulp.task('copy:static', function () {
-    return gulp.src([
-            'src/static/**/*',
-            'src/static/.htaccess'
-        ])
+    return gulp.src('src/static/**/*')
         .pipe(gulp.dest('src/boot'));
 });
 
@@ -221,10 +206,15 @@ gulp.task('release:optimize:images', function () {
 /**
  * Clean Temp Folders
  */
-gulp.task('clean', function (callback) {
+gulp.task('clean:prepare', function (callback) {
     return del([
-        'theme',
         'src/boot'
+    ], callback);
+});
+
+gulp.task('clean:release', function (callback) {
+    return del([
+        'theme'
     ], callback);
 });
 
@@ -244,7 +234,7 @@ gulp.task('clean:all', function (callback) {
  * Bundled Tasks
  */
 gulp.task('prepare', function (callback) {
-    run('clean', [
+    run('clean:prepare', [
         'copy:static'
     ], [
         'copy:assets:fonts',
@@ -262,7 +252,7 @@ gulp.task('release', function (callback) {
     // Warrning: Change ENVIRONMENT to Prodctuion
     ENVIRONMENT = 'production';
 
-    run('prepare', [
+    run('prepare', 'clean:release', [
         'release:copy:assets',
         'release:copy:extensions',
         'release:copy:handlers',
