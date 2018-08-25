@@ -166,12 +166,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/scarwu/Oni.git",
-                "reference": "886fc3f789ddf5dd0b9b54bddfdf676b48b28501"
+                "reference": "cce5039f093e34ce437bcdf1646d0c8b41e92fc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scarwu/Oni/zipball/886fc3f789ddf5dd0b9b54bddfdf676b48b28501",
-                "reference": "886fc3f789ddf5dd0b9b54bddfdf676b48b28501",
+                "url": "https://api.github.com/repos/scarwu/Oni/zipball/cce5039f093e34ce437bcdf1646d0c8b41e92fc9",
+                "reference": "cce5039f093e34ce437bcdf1646d0c8b41e92fc9",
                 "shasum": ""
             },
             "require": {
@@ -201,7 +201,7 @@
             ],
             "description": "A Lightweight PHP Framework for Web & CLI",
             "homepage": "https://github.com/scarwu/Oni",
-            "time": "2018-08-14T15:42:36+00:00"
+            "time": "2018-08-25T14:57:30+00:00"
         }
     ],
     "packages-dev": [

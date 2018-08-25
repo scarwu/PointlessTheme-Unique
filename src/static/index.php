@@ -31,6 +31,10 @@ $app = new Oni\Web\App();
 
 $app->setAttr('controller/namespace', 'WebApp\Controller');
 $app->setAttr('controller/path', ROOT . '/application/controllers');
+$app->setAttr('controller/default/Handler', 'Main');
+$app->setAttr('controller/default/action', 'describe');
+$app->setAttr('controller/error/Handler', 'Main');
+$app->setAttr('controller/error/action', 'describe');
 $app->setAttr('model/namespace', 'WebApp\Model');
 $app->setAttr('model/path', ROOT . '/application/models');
 $app->setAttr('view/path', ROOT . '/application/views');

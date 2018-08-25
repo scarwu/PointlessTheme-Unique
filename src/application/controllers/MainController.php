@@ -12,6 +12,7 @@ namespace WebApp\Controller;
 
 use Pointless\Library\Misc;
 use Pointless\Library\Utility;
+use Pointless\Library\Resource;
 use Oni\Web\Controller\Page as Controller;
 
 class MainController extends Controller
@@ -19,17 +20,7 @@ class MainController extends Controller
     /**
      * @var array
      */
-    private $systemConstant = [];
-
-    /**
-     * @var array
-     */
-    private $systemConfig = [];
-
-    /**
-     * @var array
-     */
-    private $themeConfig = [];
+    private $sideList = [];
 
     /**
      * @var array
@@ -38,9 +29,6 @@ class MainController extends Controller
 
     public function up()
     {
-        // Set View
-        $this->view->setLayoutPath('index');
-
         // Load System Consatnt
         include POI_ROOT . '/constant.php';
 
@@ -55,6 +43,11 @@ class MainController extends Controller
         require ROOT . '/application/config.php';
 
         $themeConfig = $config;
+
+        // Set Resource
+        Resource::set('system:contant', $systemConstant);
+        Resource::set('system:config', $systemConfig);
+        Resource::set('theme:config', $themeConfig);
 
         // Load Posts
         $postBundle = [];
@@ -100,11 +93,23 @@ class MainController extends Controller
             }
         }
 
-        // Set
-        $this->systemConstant = $systemConstant;
-        $this->systemConfig = $systemConfig;
-        $this->themeConfig = $themeConfig;
+        // Get Side Data
+        $sideList = [];
+
+        foreach ($themeConfig['views']['side'] as $name) {
+            if (!isset($handlerList[$name])) {
+                continue;
+            }
+
+            $sideList[$name] = $handlerList[$name]->getSideData();
+        }
+
+        // Set Private Variables
         $this->handlerList = $handlerList;
+        $this->sideList = $sideList;
+
+        // Set View
+        $this->view->setLayoutPath('index');
     }
 
     public function down()
@@ -113,11 +118,55 @@ class MainController extends Controller
     }
 
     /**
-     * Default Action
+     * Describe Action
+     *
+     * @param array $params
      */
-    public function defaultAction()
+    public function describeAction($params = [])
     {
-        $this->pageAction();
+        $path = join('/', $params) . '/';
+
+        // Get Container Data List
+        $containerList = $this->handlerList['describe']->getContainerDataList();
+
+        if (isset($containerList[$path])) {
+
+            // Set View
+            $this->view->setContentPath('container/describe');
+            $this->view->setData([
+                'systemConstant' => Resource::get('system:constant'),
+                'systemConfig' => Resource::get('system:config'),
+                'themeConfig' => Resource::get('theme:config'),
+                'sideList' => $this->sideList,
+                'container' => $containerList[$path]
+            ]);
+        } else {
+            $this->pageAction($params);
+        }
+    }
+
+    /**
+     * Article Action
+     *
+     * @param array $params
+     */
+    public function articleAction($params = [])
+    {
+        $path = 'article/' . (0 !== count($params) ? join('/', $params) . '/' : '');
+
+        // Get Container Data List
+        $containerList = $this->handlerList['article']->getContainerDataList();
+
+        // Set View
+        $this->view->setContentPath('container/article');
+        $this->view->setData([
+            'systemConstant' => Resource::get('system:constant'),
+            'systemConfig' => Resource::get('system:config'),
+            'themeConfig' => Resource::get('theme:config'),
+            'sideList' => $this->sideList,
+            'container' => isset($containerList[$path])
+                ? $containerList[$path] : []
+        ]);
     }
 
     /**
@@ -127,34 +176,20 @@ class MainController extends Controller
      */
     public function pageAction($params = [])
     {
-        // Get Side Data
-        $sideList = [];
-
-        foreach ($this->themeConfig['views']['side'] as $name) {
-            if (!isset($this->handlerList[$name])) {
-                continue;
-            }
-
-            $sideList[$name] = $this->handlerList[$name]->getSideData();
-        }
+        $path = 'page/' . (0 !== count($params) ? join('/', $params) . '/' : '');
 
         // Get Container Data List
-        $containerDataList = $this->handlerList['page']->getContainerDataList();
-
-        $url = join('/', $params) . '/';
-
-        if (isset($containerDataList[$url])) {
-            $container = $containerDataList[$url];
-        }
+        $containerList = $this->handlerList['page']->getContainerDataList();
 
         // Set View
         $this->view->setContentPath('container/page');
         $this->view->setData([
-            'systemConstant' => $this->systemConstant,
-            'systemConfig' => $this->systemConfig,
-            'themeConfig' => $this->themeConfig,
-            'sideList' => $sideList,
-            'container' => $container
+            'systemConstant' => Resource::get('system:constant'),
+            'systemConfig' => Resource::get('system:config'),
+            'themeConfig' => Resource::get('theme:config'),
+            'sideList' => $this->sideList,
+            'container' => isset($containerList[$path])
+                ? $containerList[$path] : []
         ]);
     }
 
@@ -165,14 +200,20 @@ class MainController extends Controller
      */
     public function archiveAction($params = [])
     {
+        $path = 'archive/' . (0 !== count($params) ? join('/', $params) . '/' : '');
+
+        // Get Container Data List
+        $containerList = $this->handlerList['archive']->getContainerDataList();
+
         // Set View
         $this->view->setContentPath('container/archive');
         $this->view->setData([
-            'systemConstant' => $this->systemConstant,
-            'systemConfig' => $this->systemConfig,
-            'themeConfig' => $this->themeConfig,
-            'sideList' => $sideList,
-            'container' => $container
+            'systemConstant' => Resource::get('system:constant'),
+            'systemConfig' => Resource::get('system:config'),
+            'themeConfig' => Resource::get('theme:config'),
+            'sideList' => $this->sideList,
+            'container' => isset($containerList[$path])
+                ? $containerList[$path] : []
         ]);
     }
 
@@ -183,14 +224,20 @@ class MainController extends Controller
      */
     public function categoryAction($params = [])
     {
+        $path = 'category/' . (0 !== count($params) ? join('/', $params) . '/' : '');
+
+        // Get Container Data List
+        $containerList = $this->handlerList['category']->getContainerDataList();
+
         // Set View
         $this->view->setContentPath('container/category');
         $this->view->setData([
-            'systemConstant' => $this->systemConstant,
-            'systemConfig' => $this->systemConfig,
-            'themeConfig' => $this->themeConfig,
-            'sideList' => $sideList,
-            'container' => $container
+            'systemConstant' => Resource::get('system:constant'),
+            'systemConfig' => Resource::get('system:config'),
+            'themeConfig' => Resource::get('theme:config'),
+            'sideList' => $this->sideList,
+            'container' => isset($containerList[$path])
+                ? $containerList[$path] : []
         ]);
     }
 
@@ -201,50 +248,20 @@ class MainController extends Controller
      */
     public function tagAction($params = [])
     {
+        $path = 'tag/' . (0 !== count($params) ? join('/', $params) . '/' : '');
+
+        // Get Container Data List
+        $containerList = $this->handlerList['tag']->getContainerDataList();
+
         // Set View
         $this->view->setContentPath('container/tag');
         $this->view->setData([
-            'systemConstant' => $this->systemConstant,
-            'systemConfig' => $this->systemConfig,
-            'themeConfig' => $this->themeConfig,
-            'sideList' => $sideList,
-            'container' => $container
-        ]);
-    }
-
-    /**
-     * Article Action
-     *
-     * @param array $params
-     */
-    public function articleAction($params = [])
-    {
-        // Set View
-        $this->view->setContentPath('container/article');
-        $this->view->setData([
-            'systemConstant' => $this->systemConstant,
-            'systemConfig' => $this->systemConfig,
-            'themeConfig' => $this->themeConfig,
-            'sideList' => $sideList,
-            'container' => $container
-        ]);
-    }
-
-    /**
-     * Describe Action
-     *
-     * @param array $params
-     */
-    public function describeAction($params = [])
-    {
-        // Set View
-        $this->view->setContentPath('container/describe');
-        $this->view->setData([
-            'systemConstant' => $this->systemConstant,
-            'systemConfig' => $this->systemConfig,
-            'themeConfig' => $this->themeConfig,
-            'sideList' => $sideList,
-            'container' => $container
+            'systemConstant' => Resource::get('system:constant'),
+            'systemConfig' => Resource::get('system:config'),
+            'themeConfig' => Resource::get('theme:config'),
+            'sideList' => $this->sideList,
+            'container' => isset($containerList[$path])
+                ? $containerList[$path] : []
         ]);
     }
 }
