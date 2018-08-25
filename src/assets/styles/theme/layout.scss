@@ -276,6 +276,7 @@ textarea {
                 font-family: 'monospace', 'Courier';
                 background: none;
                 border: none;
+                color: #839496;
 
                 @include border-radius(none);
             }
