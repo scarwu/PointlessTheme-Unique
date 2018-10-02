@@ -11,6 +11,9 @@
 // Set Default Time Zone
 date_default_timezone_set('Etc/UTC');
 
+// Fix: PREG_JIT_STACKLIMIT_ERROR (PHP 7)
+ini_set('pcre.jit', false);
+
 // Define Global Constants
 define('ROOT', __DIR__ . '/..');
 define('POI_ROOT', ROOT . '/../subModules/Pointless/src');
