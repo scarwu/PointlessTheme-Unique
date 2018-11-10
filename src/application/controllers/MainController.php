@@ -35,7 +35,11 @@ class MainController extends Controller
         $systemConstant = $constant;
 
         // Load System Config
-        include POI_ROOT . '/sample/config.php';
+        if (is_dir(getenv('POI_BLOG_PATH'))) {
+            include getenv('POI_BLOG_PATH') . '/config.php';
+        } else {
+            include POI_ROOT . '/sample/config.php';
+        }
 
         $systemConfig = $config;
 

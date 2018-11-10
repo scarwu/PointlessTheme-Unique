@@ -17,7 +17,12 @@ ini_set('pcre.jit', false);
 // Define Global Constants
 define('ROOT', __DIR__ . '/..');
 define('POI_ROOT', ROOT . '/../subModules/Pointless/src');
-define('BLOG_POST', POI_ROOT . '/sample/posts');
+
+if (is_dir(getenv('POI_BLOG_PATH'))) {
+    define('BLOG_POST', getenv('POI_BLOG_PATH') . '/posts');
+} else {
+    define('BLOG_POST', POI_ROOT . '/sample/posts');
+}
 
 // Require Composer Autoloader
 require ROOT . '/application/vendor/autoload.php';
