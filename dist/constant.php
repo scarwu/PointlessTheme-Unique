@@ -12,4 +12,3 @@ $constant = [
     'name' => 'Unique',
     'version' => '1.0.0'
 ];
-
