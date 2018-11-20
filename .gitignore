@@ -1,5 +1,4 @@
 .DS_Store
 .sass-cache
-src/boot
-src/application/vendor
+temp
 node_modules

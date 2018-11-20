@@ -65,26 +65,41 @@ var compileTask = {
 /**
  * Copy Files & Folders
  */
-gulp.task('copy:static', function () {
-    return gulp.src('src/static/**/*')
-        .pipe(gulp.dest('src/boot'));
+gulp.task('copy:config', function () {
+    return gulp.src('src/config.php')
+        .pipe(gulp.dest('temp'));
+});
+
+gulp.task('copy:extensions', function () {
+    return gulp.src('src/extensions/**/*')
+        .pipe(gulp.dest('temp/extensions'));
+});
+
+gulp.task('copy:handlers', function () {
+    return gulp.src('src/handlers/**/*')
+        .pipe(gulp.dest('temp/handlers'));
+});
+
+gulp.task('copy:views', function () {
+    return gulp.src('src/views/**/*')
+        .pipe(gulp.dest('temp/views'));
 });
 
 gulp.task('copy:assets:fonts', function () {
     return gulp.src('src/assets/fonts/*')
-        .pipe(gulp.dest('src/boot/assets/fonts'));
+        .pipe(gulp.dest('temp/assets/fonts'));
 });
 
 gulp.task('copy:assets:images', function () {
     return gulp.src('src/assets/images/**/*')
-        .pipe(gulp.dest('src/boot/assets/images'));
+        .pipe(gulp.dest('temp/assets/images'));
 });
 
 gulp.task('copy:vendor:fonts', function () {
     return gulp.src([
             'node_modules/font-awesome/fonts/*.{otf,eot,svg,ttf,woff,woff2}'
         ])
-        .pipe(gulp.dest('src/boot/assets/fonts/vendor'));
+        .pipe(gulp.dest('temp/assets/fonts/vendor'));
 });
 
 gulp.task('copy:vendor:scripts', function () {
@@ -95,7 +110,7 @@ gulp.task('copy:vendor:scripts', function () {
             path.basename = path.basename.split('.')[0];
             path.extname = '.min.js';
         }))
-        .pipe(gulp.dest('src/boot/assets/scripts/vendor'));
+        .pipe(gulp.dest('temp/assets/scripts/vendor'));
 });
 
 /**
@@ -104,7 +119,7 @@ gulp.task('copy:vendor:scripts', function () {
 gulp.task('style:sass', function() {
     return compileTask.sass([
         'src/assets/styles/theme.{sass,scss}'
-    ], 'src/boot/assets/styles');
+    ], 'temp/assets/styles');
 });
 
 /**
@@ -113,7 +128,7 @@ gulp.task('style:sass', function() {
 gulp.task('complex:webpack', function () {
     var result = compileTask.webpack(
         'src/assets/scripts/theme.jsx',
-        'src/boot/assets/scripts'
+        'temp/assets/scripts'
     );
 
     return WEBPACK_NEED_WATCH ? true : result;
@@ -128,25 +143,31 @@ gulp.task('watch', function () {
     $.livereload.listen();
 
     gulp.watch([
-        'src/application/**/*',
-        'src/boot/**/*',
-        '!src/boot/uploads/**/*'
+        'temp/**/*'
     ]).on('change', $.livereload.changed);
 
-    // Static Files
+    gulp.watch('src/config.php', [
+        'copy:config'
+    ]);
+
+    gulp.watch('src/extensions/**/*', [
+        'copy:extensions'
+    ]);
+
+    gulp.watch('src/handlers/**/*', [
+        'copy:handlers'
+    ]);
+
+    gulp.watch('src/views/**/*', [
+        'copy:views'
+    ]);
+
     gulp.watch('src/assets/fonts/*', [
         'copy:assets:fonts'
     ]);
 
     gulp.watch('src/assets/images/**/*', [
         'copy:assets:images'
-    ]);
-
-    gulp.watch([
-        'src/static/**/*',
-        'src/static/.htaccess'
-    ], [
-        'copy:static'
     ]);
 
     // Pre Compile Files
@@ -159,48 +180,28 @@ gulp.task('watch', function () {
  * Release
  */
 // Copy
-gulp.task('release:copy:assets', function () {
-    return gulp.src('src/boot/assets/**/*')
-        .pipe(gulp.dest('theme/assets'));
-});
-
-gulp.task('release:copy:extensions', function () {
-    return gulp.src('src/application/extensions/**/*')
-        .pipe(gulp.dest('theme/extensions'));
-});
-
-gulp.task('release:copy:handlers', function () {
-    return gulp.src('src/application/handlers/**/*')
-        .pipe(gulp.dest('theme/handlers'));
-});
-
-gulp.task('release:copy:views', function () {
-    return gulp.src('src/application/views/**/*')
-        .pipe(gulp.dest('theme/views'));
-});
-
-gulp.task('release:copy:config', function () {
-    return gulp.src('src/application/config.php')
-        .pipe(gulp.dest('theme'));
+gulp.task('release:copy:all', function () {
+    return gulp.src('temp/**/*')
+        .pipe(gulp.dest('dist'));
 });
 
 // Optimize
 gulp.task('release:optimize:scripts', function () {
-    return gulp.src('theme/assets/scripts/**/*')
+    return gulp.src('dist/assets/scripts/**/*')
         .pipe($.uglify())
-        .pipe(gulp.dest('theme/assets/scripts'));
+        .pipe(gulp.dest('dist/assets/scripts'));
 });
 
 gulp.task('release:optimize:styles', function () {
-    return gulp.src('theme/assets/styles/**/*')
+    return gulp.src('dist/assets/styles/**/*')
         .pipe($.cssnano())
-        .pipe(gulp.dest('theme/assets/styles'));
+        .pipe(gulp.dest('dist/assets/styles'));
 });
 
 gulp.task('release:optimize:images', function () {
-    return gulp.src('theme/assets/images/**/*')
+    return gulp.src('dist/assets/images/**/*')
         .pipe($.imagemin())
-        .pipe(gulp.dest('theme/assets/images'));
+        .pipe(gulp.dest('dist/assets/images'));
 });
 
 /**
@@ -208,25 +209,23 @@ gulp.task('release:optimize:images', function () {
  */
 gulp.task('clean:prepare', function (callback) {
     return del([
-        'src/boot'
+        'temp'
     ], callback);
 });
 
 gulp.task('clean:release', function (callback) {
     return del([
-        'theme'
+        'dist'
     ], callback);
 });
 
 gulp.task('clean:all', function (callback) {
     return del([
-        'release',
-        'src/boot',
-        'src/application/vendor',
+        'dist',
+        'temp',
         'node_modules',
         'package.lock',
-        'yarn.lock',
-        'composer.lock'
+        'yarn.lock'
     ], callback);
 });
 
@@ -235,8 +234,10 @@ gulp.task('clean:all', function (callback) {
  */
 gulp.task('prepare', function (callback) {
     run('clean:prepare', [
-        'copy:static'
-    ], [
+        'copy:config',
+        'copy:extensions',
+        'copy:handlers',
+        'copy:views',
         'copy:assets:fonts',
         'copy:assets:images',
         'copy:vendor:fonts',
@@ -253,11 +254,7 @@ gulp.task('release', function (callback) {
     ENVIRONMENT = 'production';
 
     run('prepare', 'clean:release', [
-        'release:copy:assets',
-        'release:copy:extensions',
-        'release:copy:handlers',
-        'release:copy:views',
-        'release:copy:config'
+        'release:copy:all'
     ], [
         'release:optimize:images',
         'release:optimize:scripts',
