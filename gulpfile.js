@@ -65,8 +65,11 @@ var compileTask = {
 /**
  * Copy Files & Folders
  */
-gulp.task('copy:config', function () {
-    return gulp.src('src/config.php')
+gulp.task('copy:meta', function () {
+    return gulp.src([
+            'src/constant.php',
+            'src/config.php'
+        ])
         .pipe(gulp.dest('temp'));
 });
 
@@ -147,7 +150,7 @@ gulp.task('watch', function () {
     ]).on('change', $.livereload.changed);
 
     gulp.watch('src/config.php', [
-        'copy:config'
+        'copy:meta'
     ]);
 
     gulp.watch('src/extensions/**/*', [
@@ -234,7 +237,7 @@ gulp.task('clean:all', function (callback) {
  */
 gulp.task('prepare', function (callback) {
     run('clean:prepare', [
-        'copy:config',
+        'copy:meta',
         'copy:extensions',
         'copy:handlers',
         'copy:views',
