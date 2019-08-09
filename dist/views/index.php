@@ -1,4 +1,7 @@
 <?php
+use Oni\Web\Helper;
+
+$name = $systemConfig['blog']['name'];
 $lang = $systemConfig['blog']['lang'];
 $slogan = $systemConfig['blog']['slogan'];
 $footer = $systemConfig['blog']['footer'];
@@ -17,7 +20,7 @@ $description = (!isset($container['description']) || '' === $container['descript
     : $container['description'];
 ?>
 <!doctype html>
-<html class="no-js" style="display: block !important;" lang="<?=$lang?>">
+<html lang="<?=$lang?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -35,7 +38,6 @@ $description = (!isset($container['description']) || '' === $container['descript
     <link rel="shortcut icon" href="//<?="{$domainName}{$baseUrl}"?>favicon.ico">
     <link rel="stylesheet" href="<?=$baseUrl?>assets/styles/theme.min.css">
 
-    <script src="<?=$baseUrl?>assets/scripts/vendor/modernizr.min.js"></script>
     <script src="<?=$baseUrl?>assets/scripts/theme.min.js" async></script>
 
     <script>
@@ -60,7 +62,7 @@ $description = (!isset($container['description']) || '' === $container['descript
 </head>
 <body>
     <hgroup id="header">
-        <h1><a href="/">ScarShow</a></h1>
+        <h1><?=Helper::linkTo($baseUrl, $name)?></h1>
         <h2><?=$slogan?></h2>
     </hgroup>
 
@@ -116,12 +118,5 @@ $description = (!isset($container['description']) || '' === $container['descript
         }
     </script>
     <?php endif; ?>
-    <script>
-        if (document.getElementsByTagName('social_tool')) {
-            asyncLoad('//apis.google.com/js/plusone.js');
-            asyncLoad('//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=1403512429930397&version=v2.0');
-            asyncLoad('//platform.twitter.com/widgets.js');
-        }
-    </script>
 </body>
 </html>
