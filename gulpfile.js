@@ -6,269 +6,191 @@
  * @copyright   Copyright (c) Scar Wu (http://scar.tw)
  */
 
-var ENVIRONMENT = 'development'; // production | development | testing
-var WEBPACK_NEED_WATCH = false;
+let gulp = require('gulp');
+let del = require('del');
+let $ = require('gulp-load-plugins')();
+let log = require('fancy-log');
+let colors = require('ansi-colors');
+let webpack = require('webpack');
+let webpackStream = require('webpack-stream');
+let webpackConfig = require('./webpack.config.js');
+let postfix = (new Date()).getTime().toString();
 
-var gulp = require('gulp');
-var del = require('del');
-var run = require('run-sequence');
-var $ = require('gulp-load-plugins')();
-var process = require('process');
-var webpackStream = require('webpack-stream');
-var webpack = require('webpack');
-var webpackConfig = require('./webpack.config.js');
+let ENVIRONMENT = 'development';
+let WEBPACK_NEED_WATCH = false;
 
-var postfix = (new Date()).getTime().toString();
-
+/**
+ * Compile Style & Script
+ */
 function handleCompileError(event) {
-    $.util.log($.util.colors.red(event.message), 'error.');
+    log.error(colors.red(event.message), 'error.');
 }
 
-// Assets Compile Task
-var compileTask = {
-    sass: function (src, dest) {
-        return gulp.src(src)
-            .pipe($.sass().on('error', handleCompileError))
-            .pipe($.replace('../fonts/', '../../assets/fonts/vendor/'))
-            .pipe($.autoprefixer())
-            .pipe($.rename(function (path) {
-                path.basename = path.basename.split('.')[0];
-                path.extname = '.min.css';
-            }))
-            .pipe(gulp.dest(dest));
-    },
-    webpack: function (src, dest) {
-        if ('production' === ENVIRONMENT) {
-            var definePlugin = new webpack.DefinePlugin({
-                'process.env': {
-                    'ENV': "'production'",
-                    'BUILD_TIME': postfix,
-                    'NODE_ENV': "'production'"
-                }
-            });
+function compileSass() {
+    return gulp.src('src/assets/styles/theme.{sass,scss}')
+        .pipe($.sass({
+            outputStyle: ('production' === ENVIRONMENT) ? 'compressed' : 'expanded'
+        }).on('error', handleCompileError))
+        .pipe($.replace('../fonts/', '../../assets/fonts/vendor/'))
+        .pipe($.autoprefixer())
+        .pipe($.rename(function (path) {
+            path.basename = path.basename.split('.')[0];
+            path.extname = '.min.css';
+        }))
+        .pipe(gulp.dest('temp/assets/styles'));
+}
 
-            webpackConfig.mode = ENVIRONMENT;
-            webpackConfig.plugins = webpackConfig.plugins || [];
-            webpackConfig.plugins.push(definePlugin);
-        }
+function compileWebpack(callback) {
+    if ('production' === ENVIRONMENT) {
+        let definePlugin = new webpack.DefinePlugin({
+            'process.env': {
+                'ENV': "'production'",
+                'BUILD_TIME': postfix,
+                'NODE_ENV': "'production'"
+            }
+        });
 
-        if (WEBPACK_NEED_WATCH) {
-            webpackConfig.watch = true;
-        }
-
-        return gulp.src(src)
-            .pipe(webpackStream(webpackConfig, webpack).on('error', handleCompileError))
-            .pipe(gulp.dest(dest));
+        webpackConfig.mode = ENVIRONMENT;
+        webpackConfig.plugins = webpackConfig.plugins || [];
+        webpackConfig.plugins.push(definePlugin);
     }
-};
+
+    if (WEBPACK_NEED_WATCH) {
+        webpackConfig.watch = true;
+    }
+
+    let result = gulp.src('src/assets/scripts/theme.jsx')
+        .pipe(webpackStream(webpackConfig, webpack).on('error', handleCompileError))
+        .pipe(gulp.dest('temp/assets/scripts'));
+
+    if (WEBPACK_NEED_WATCH) {
+        callback();
+    } else {
+        return result;
+    }
+}
 
 /**
  * Copy Files & Folders
  */
-gulp.task('copy:meta', function () {
+function copyMeta() {
     return gulp.src([
             'src/constant.php',
             'src/config.php'
         ])
         .pipe(gulp.dest('temp'));
-});
+}
 
-gulp.task('copy:extensions', function () {
+function copyExtensions() {
     return gulp.src('src/extensions/**/*')
         .pipe(gulp.dest('temp/extensions'));
-});
+}
 
-gulp.task('copy:handlers', function () {
+function copyHandlers() {
     return gulp.src('src/handlers/**/*')
         .pipe(gulp.dest('temp/handlers'));
-});
+}
 
-gulp.task('copy:views', function () {
+function copyViews() {
     return gulp.src('src/views/**/*')
         .pipe(gulp.dest('temp/views'));
-});
+}
 
-gulp.task('copy:assets:fonts', function () {
+function copyAssetsFonts() {
     return gulp.src('src/assets/fonts/*')
         .pipe(gulp.dest('temp/assets/fonts'));
-});
+}
 
-gulp.task('copy:assets:images', function () {
+function copyAssetsImages() {
     return gulp.src('src/assets/images/**/*')
         .pipe(gulp.dest('temp/assets/images'));
-});
+}
 
-gulp.task('copy:vendor:fonts', function () {
-    return gulp.src([
-            'node_modules/font-awesome/fonts/*.{otf,eot,svg,ttf,woff,woff2}'
-        ])
+function copyVendorFonts() {
+    return gulp.src('node_modules/font-awesome/fonts/*.{otf,eot,svg,ttf,woff,woff2}')
         .pipe(gulp.dest('temp/assets/fonts/vendor'));
-});
-
-gulp.task('copy:vendor:scripts', function () {
-    return gulp.src([
-            'node_modules/modernizr/modernizr.js'
-        ])
-        .pipe($.rename(function (path) {
-            path.basename = path.basename.split('.')[0];
-            path.extname = '.min.js';
-        }))
-        .pipe(gulp.dest('temp/assets/scripts/vendor'));
-});
-
-/**
- * Styles
- */
-gulp.task('style:sass', function() {
-    return compileTask.sass([
-        'src/assets/styles/theme.{sass,scss}'
-    ], 'temp/assets/styles');
-});
-
-/**
- * Complex
- */
-gulp.task('complex:webpack', function () {
-    var result = compileTask.webpack(
-        'src/assets/scripts/theme.jsx',
-        'temp/assets/scripts'
-    );
-
-    return WEBPACK_NEED_WATCH ? true : result;
-});
+}
 
 /**
  * Watching Files
  */
-gulp.task('watch', function () {
+function watch() {
+
+    // Watch Files
+    gulp.watch('temp/**/*').on('change', $.livereload.changed);
+    gulp.watch('src/{config,constant}.php', copyMeta);
+    gulp.watch('src/extensions/**/*', copyExtensions);
+    gulp.watch('src/handlers/**/*', copyHandlers);
+    gulp.watch('src/views/**/*', copyViews);
+    gulp.watch('src/assets/fonts/*', copyAssetsFonts);
+    gulp.watch('src/assets/images/**/*', copyAssetsImages);
+    gulp.watch('src/assets/styles/**/*.{sass,scss}', compileSass);
 
     // Start LiveReload
     $.livereload.listen();
-
-    gulp.watch([
-        'temp/**/*'
-    ]).on('change', $.livereload.changed);
-
-    gulp.watch('src/config.php', [
-        'copy:meta'
-    ]);
-
-    gulp.watch('src/extensions/**/*', [
-        'copy:extensions'
-    ]);
-
-    gulp.watch('src/handlers/**/*', [
-        'copy:handlers'
-    ]);
-
-    gulp.watch('src/views/**/*', [
-        'copy:views'
-    ]);
-
-    gulp.watch('src/assets/fonts/*', [
-        'copy:assets:fonts'
-    ]);
-
-    gulp.watch('src/assets/images/**/*', [
-        'copy:assets:images'
-    ]);
-
-    // Pre Compile Files
-    gulp.watch('src/assets/styles/**/*.{sass,scss}', [
-        'style:sass'
-    ]);
-});
+}
 
 /**
  * Release
  */
-// Copy
-gulp.task('release:copy:all', function () {
+function releaseCopyAll() {
     return gulp.src('temp/**/*')
         .pipe(gulp.dest('dist'));
-});
+}
 
-// Optimize
-gulp.task('release:optimize:scripts', function () {
-    return gulp.src('dist/assets/scripts/**/*')
-        .pipe($.uglify())
-        .pipe(gulp.dest('dist/assets/scripts'));
-});
-
-gulp.task('release:optimize:styles', function () {
-    return gulp.src('dist/assets/styles/**/*')
-        .pipe($.cssnano())
-        .pipe(gulp.dest('dist/assets/styles'));
-});
-
-gulp.task('release:optimize:images', function () {
-    return gulp.src('dist/assets/images/**/*')
-        .pipe($.imagemin())
-        .pipe(gulp.dest('dist/assets/images'));
-});
+function releaseReplaceIndex() {
+    return gulp.src('dist/views/index.php')
+        .pipe($.replace('$postfix = time()', '$postfix = ' + postfix))
+        .pipe(gulp.dest('dist/views'));
+}
 
 /**
- * Clean Temp Folders
+ * Set Variables
  */
-gulp.task('clean:prepare', function (callback) {
-    return del([
-        'temp'
-    ], callback);
-});
-
-gulp.task('clean:release', function (callback) {
-    return del([
-        'dist'
-    ], callback);
-});
-
-gulp.task('clean:all', function (callback) {
-    return del([
-        'dist',
-        'temp',
-        'node_modules',
-        'package.lock',
-        'yarn.lock'
-    ], callback);
-});
-
-/**
- * Bundled Tasks
- */
-gulp.task('prepare', function (callback) {
-    run('clean:prepare', [
-        'copy:meta',
-        'copy:extensions',
-        'copy:handlers',
-        'copy:views',
-        'copy:assets:fonts',
-        'copy:assets:images',
-        'copy:vendor:fonts',
-        'copy:vendor:scripts'
-    ], [
-        'style:sass',
-        'complex:webpack'
-    ], callback);
-});
-
-gulp.task('release', function (callback) {
+function setEnv(callback) {
 
     // Warrning: Change ENVIRONMENT to Prodctuion
     ENVIRONMENT = 'production';
 
-    run('prepare', 'clean:release', [
-        'release:copy:all'
-    ], [
-        'release:optimize:images',
-        'release:optimize:scripts',
-        'release:optimize:styles'
-    ], callback);
-});
+    callback();
+}
 
-gulp.task('default', function (callback) {
+function setWatch(callback) {
 
     // Webpack need watch
     WEBPACK_NEED_WATCH = true;
 
-    run('prepare', 'watch', callback);
-});
+    callback();
+}
+
+/**
+ * Clean Temp Folders
+ */
+function cleanTemp() {
+    return del('temp');
+}
+
+function cleanDist() {
+    return del('dist');
+}
+
+/**
+ * Bundled Tasks
+ */
+gulp.task('prepare', gulp.series(
+    cleanTemp,
+    gulp.parallel(copyMeta, copyExtensions, copyHandlers, copyViews, copyAssetsFonts, copyAssetsImages, copyVendorFonts),
+    gulp.parallel(compileSass, compileWebpack)
+));
+
+gulp.task('release', gulp.series(
+    setEnv, cleanDist,
+    'prepare',
+    releaseCopyAll, releaseReplaceIndex
+));
+
+gulp.task('default', gulp.series(
+    setWatch,
+    'prepare',
+    watch
+));

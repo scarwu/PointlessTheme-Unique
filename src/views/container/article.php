@@ -37,29 +37,6 @@ $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
                 <a href="<?=Helper::linkEncode("{$baseUrl}{$container['url']}")?>#disqus_thread">0 Comment</a>
             </div>
             <?php endif; ?>
-            <hr>
-            <div class="social_tool">
-                <div class="twitter">
-                    <a class="twitter-share-button"
-                        data-url="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}")?>"
-                        data-text="<?="{$container['title']} | {$systemConfig['blog']['name']}"?>"
-                        data-lang="en"
-                        data-via="xneriscool"></a>
-                </div>
-                <div class="facebook">
-                    <div class="fb-like"
-                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}")?>"
-                        data-layout="button_count"
-                        data-action="like"
-                        data-show-faces="true"
-                        data-share="false"></div>
-                </div>
-                <div class="google">
-                    <div class="g-plusone"
-                        data-href="//<?=Helper::linkEncode("{$domainName}{$baseUrl}{$container['url']}")?>"
-                        data-size="medium"></div>
-                </div>
-            </div>
         </div>
         <div class="content"><?=$container['content']?></div>
     </article>
