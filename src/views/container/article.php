@@ -1,5 +1,5 @@
 <?php
-use Oni\Web\Helper;
+use Oni\Web\View\Helper;
 
 $domainName = $systemConfig['blog']['domainName'];
 $baseUrl = $systemConfig['blog']['baseUrl'];
