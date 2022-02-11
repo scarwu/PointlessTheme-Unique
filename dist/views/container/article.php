@@ -1,5 +1,5 @@
 <?php
-use Oni\Web\View\Helper;
+use Oni\Web\Helper\HTML;
 
 $domainName = $systemConfig['blog']['domainName'];
 $baseUrl = $systemConfig['blog']['baseUrl'];
@@ -8,9 +8,9 @@ $disqusShortname = $systemConfig['blog']['disqusShortname'];
 // Paging
 $paging = $container['paging'];
 $prevButton = isset($paging['prevUrl'])
-    ? Helper::linkTo("{$baseUrl}{$paging['prevUrl']}", "<< {$paging['prevTitle']}") : '';
+    ? HTML::linkTo("{$baseUrl}{$paging['prevUrl']}", "<< {$paging['prevTitle']}") : '';
 $nextButton = isset($paging['nextUrl'])
-    ? Helper::linkTo("{$baseUrl}{$paging['nextUrl']}", "{$paging['nextTitle']} >>") : '';
+    ? HTML::linkTo("{$baseUrl}{$paging['nextUrl']}", "{$paging['nextTitle']} >>") : '';
 $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
 ?>
 <div id="container_article">
@@ -19,22 +19,22 @@ $indicator = "{$paging['currentIndex']} / {$paging['totalIndex']}";
         <div class="info">
             <div class="archive">
                 <i class="fa fa-calendar"></i>
-                <?=Helper::linkTo("{$baseUrl}archive/{$container['year']}/", $container['date'])?>
+                <?=HTML::linkTo("{$baseUrl}archive/{$container['year']}/", $container['date'])?>
             </div>
             <div class="category">
                 <i class="fa fa-folder"></i>
-                <?=Helper::linkTo("{$baseUrl}category/{$container['category']}/", $container['category'])?>
+                <?=HTML::linkTo("{$baseUrl}category/{$container['category']}/", $container['category'])?>
             </div>
             <?php foreach ($container['tags'] as $tag): ?>
             <div class="tag">
                 <i class="fa fa-tag"></i>
-                <?=Helper::linkTo("{$baseUrl}tag/{$tag}/", $tag)?>
+                <?=HTML::linkTo("{$baseUrl}tag/{$tag}/", $tag)?>
             </div>
             <?php endforeach; ?>
             <?php if (null !== $disqusShortname && $container['withMessage']): ?>
             <div class="disqus_comments">
                 <i class="fa fa-comment"></i>
-                <a href="<?=Helper::linkEncode("{$baseUrl}{$container['url']}")?>#disqus_thread">0 Comment</a>
+                <a href="<?=HTML::linkEncode("{$baseUrl}{$container['url']}")?>#disqus_thread">0 Comment</a>
             </div>
             <?php endif; ?>
         </div>

@@ -1,17 +1,17 @@
 <?php
-use Oni\Web\View\Helper;
+use Oni\Web\Helper\HTML;
 
-$baseUrl = $systemConfig['blog']['baseUrl'];
+$baseUrl = $blog['config']['baseUrl'];
 ?>
 <div id="side_tag">
     <div class="title">
-        <?=Helper::linkTo("{$baseUrl}tag/", 'Tag')?>
+        <?=HTML::linkTo("{$baseUrl}tag/", 'Tag')?>
     </div>
     <div class="content">
         <?php foreach ($sideList['tag'] as $key => $postList): ?>
         <span class="item">
             <?php $count = count($postList); ?>
-            <?=Helper::linkTo("{$baseUrl}tag/{$key}/", "{$key}({$count})")?>
+            <?=HTML::linkTo("{$baseUrl}tag/{$key}/", "{$key}({$count})")?>
         </span>
         <?php endforeach; ?>
     </div>

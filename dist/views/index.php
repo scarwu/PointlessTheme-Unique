@@ -1,5 +1,5 @@
 <?php
-use Oni\Web\View\Helper;
+use Oni\Web\Helper\HTML;
 
 $name = $systemConfig['blog']['name'];
 $lang = $systemConfig['blog']['lang'];
@@ -62,7 +62,7 @@ $description = (!isset($container['description']) || '' === $container['descript
 </head>
 <body>
     <hgroup id="header">
-        <h1><?=Helper::linkTo($baseUrl, $name)?></h1>
+        <h1><?=HTML::linkTo($baseUrl, $name)?></h1>
         <h2><?=$slogan?></h2>
     </hgroup>
 

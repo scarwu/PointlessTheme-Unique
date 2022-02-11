@@ -1,5 +1,5 @@
 <?php
-$disqusShortname = $systemConfig['blog']['disqusShortname'];
+$disqusShortname = $blog['config']['disqusShortname'];
 ?>
 <div id="container_describe">
     <article class="post_block">
