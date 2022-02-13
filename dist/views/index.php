@@ -1,22 +1,23 @@
 <?php
 use Oni\Web\Helper\HTML;
 
-$name = $systemConfig['blog']['name'];
-$lang = $systemConfig['blog']['lang'];
-$slogan = $systemConfig['blog']['slogan'];
-$footer = $systemConfig['blog']['footer'];
+$postfix = 1644756016498;
+$name = $blog['config']['name'];
+$lang = $blog['config']['lang'];
+$slogan = $blog['config']['slogan'];
+$footer = $blog['config']['footer'];
 
-$domainName = $systemConfig['blog']['domainName'];
-$baseUrl = $systemConfig['blog']['baseUrl'];
+$domainName = $blog['config']['domainName'];
+$baseUrl = $blog['config']['baseUrl'];
 
-$googleAnalytics = $systemConfig['blog']['googleAnalytics'];
-$disqusShortname = $systemConfig['blog']['disqusShortname'];
+$googleAnalytics = $blog['config']['googleAnalytics'];
+$disqusShortname = $blog['config']['disqusShortname'];
 
 $title = isset($container['title'])
-    ? "{$container['title']} | {$systemConfig['blog']['name']}"
-    : $systemConfig['blog']['name'];
+    ? "{$container['title']} | {$blog['config']['name']}"
+    : $blog['config']['name'];
 $description = (!isset($container['description']) || '' === $container['description'])
-    ? $systemConfig['blog']['description']
+    ? $blog['config']['description']
     : $container['description'];
 ?>
 <!doctype html>
@@ -36,9 +37,19 @@ $description = (!isset($container['description']) || '' === $container['descript
     <link rel="author" href="//plus.google.com/+ScarWu">
     <link rel="image_src" href="//<?="{$domainName}{$baseUrl}"?>images/icon.jpg">
     <link rel="shortcut icon" href="//<?="{$domainName}{$baseUrl}"?>favicon.ico">
-    <link rel="stylesheet" href="<?=$baseUrl?>assets/styles/theme.min.css">
+    <?php if (true === isset($editorAssets)): ?>
+    <?php foreach ($editorAssets['styles'] as $file): ?>
+    <link rel="stylesheet" href="<?=$baseUrl?><?=$file?>?<?=$postfix?>">
+    <?php endforeach; ?>
+    <?php endif; ?>
+    <link rel="stylesheet" href="<?=$baseUrl?>assets/styles/theme.min.css?<?=$postfix?>">
 
-    <script src="<?=$baseUrl?>assets/scripts/theme.min.js" async></script>
+    <?php if (true === isset($editorAssets)): ?>
+    <?php foreach ($editorAssets['scripts'] as $file): ?>
+    <script src="<?=$baseUrl?><?=$file?>?<?=$postfix?>" async></script>
+    <?php endforeach; ?>
+    <?php endif; ?>
+    <script src="<?=$baseUrl?>assets/scripts/theme.min.js<?=$postfix?>" async></script>
 
     <script>
         function asyncLoad(src) {
@@ -92,7 +103,7 @@ $description = (!isset($container['description']) || '' === $container['descript
                     <input type="submit">
                 </form>
             </div>
-            <?php foreach ($themeConfig['views']['side'] as $name): ?>
+            <?php foreach ($theme['config']['views']['side'] as $name): ?>
             <?=$this->loadPartial("side/{$name}")?>
             <?php endforeach; ?>
         </div>
