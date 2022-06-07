@@ -10,5 +10,13 @@
 
 $constant = [
     'name' => 'Unique',
-    'version' => '1.0.0'
+    'version' => '1.0.0',
+    'assets' => [
+        'styles' => [
+            'assets/styles/theme.min.css'
+        ],
+        'scripts' => [
+            'assets/scripts/theme.min.js'
+        ]
+    ]
 ];
